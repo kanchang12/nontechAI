@@ -287,15 +287,183 @@ async def evaluate(req: EvalReq, user=Depends(get_user)):
 def certificate(user=Depends(get_user)):
     scores = {}
     if sb and user.get("id") != "demo":
-        r = sb.table("progress").select("scores").eq("user_id", user["id"]).execute()
+        r = sb.table("progress").select("scores,data").eq("user_id", user["id"]).execute()
         if r.data:
             scores = r.data[0].get("scores", {})
+            prog   = r.data[0].get("data", {})
+    else:
+        prog = {}
     all_scores = [s for ms in scores.values() for s in ms.values() if s]
     avg = round(sum(all_scores)/len(all_scores)) if all_scores else 0
+    levels_done = sum(len(v) for v in prog.values())
     labels = {"foundation":"CEAL Foundation","professional":"CEAL Professional","full":"Certified Enterprise AI Lead (CEAL)"}
     return {
         "name": user["name"], "email": user["email"], "tier": user["tier"],
         "title": labels.get(user["tier"],"CEAL"), "average_score": avg,
+        "levels_done": levels_done,
         "issued_by": "LOVEUAD LTD", "company_no": "16838046",
         "issued_on": datetime.utcnow().strftime("%d %B %Y"),
     }
+
+@app.get("/api/certificate/pdf")
+def certificate_pdf(user=Depends(get_user)):
+    """Generate and return a PDF certificate"""
+    from reportlab.lib.pagesizes import A4, landscape
+    from reportlab.lib import colors
+    from reportlab.lib.units import mm
+    from reportlab.pdfgen import canvas
+    from reportlab.lib.styles import getSampleStyleSheet
+    import io
+
+    scores, prog = {}, {}
+    if sb and user.get("id") != "demo":
+        r = sb.table("progress").select("scores,data").eq("user_id", user["id"]).execute()
+        if r.data:
+            scores = r.data[0].get("scores", {})
+            prog   = r.data[0].get("data", {})
+
+    all_scores = [s for ms in scores.values() for s in ms.values() if s]
+    avg = round(sum(all_scores)/len(all_scores)) if all_scores else 0
+    levels_done = sum(len(v) for v in prog.values())
+
+    labels = {
+        "foundation": "CEAL Foundation",
+        "professional": "CEAL Professional",
+        "full": "Certified Enterprise AI Lead (CEAL)"
+    }
+    cert_title = labels.get(user["tier"], "CEAL")
+    issued_on  = datetime.utcnow().strftime("%d %B %Y")
+
+    # ── Build PDF ──────────────────────────────────────────────────────────────
+    buf = io.BytesIO()
+    W, H = landscape(A4)
+    c = canvas.Canvas(buf, pagesize=landscape(A4))
+
+    NAVY   = colors.HexColor("#1B3068")
+    AMBER  = colors.HexColor("#B87200")
+    GOLD   = colors.HexColor("#D4A017")
+    LTGREY = colors.HexColor("#F5F4EF")
+    WHITE  = colors.white
+    DARK   = colors.HexColor("#1C1830")
+    SUBGREY= colors.HexColor("#4A4862")
+
+    # Background
+    c.setFillColor(LTGREY)
+    c.rect(0, 0, W, H, fill=1, stroke=0)
+
+    # Navy border frame
+    c.setStrokeColor(NAVY)
+    c.setLineWidth(3)
+    c.rect(12*mm, 12*mm, W-24*mm, H-24*mm, fill=0, stroke=1)
+
+    # Amber inner border line
+    c.setStrokeColor(AMBER)
+    c.setLineWidth(1)
+    c.rect(15*mm, 15*mm, W-30*mm, H-30*mm, fill=0, stroke=1)
+
+    # Navy header band
+    c.setFillColor(NAVY)
+    c.rect(12*mm, H-42*mm, W-24*mm, 28*mm, fill=1, stroke=0)
+
+    # Logo text in header
+    c.setFillColor(WHITE)
+    c.setFont("Helvetica-Bold", 20)
+    c.drawString(22*mm, H-26*mm, "AI")
+    c.setFillColor(AMBER)
+    c.drawString(37*mm, H-26*mm, "with")
+    c.setFillColor(WHITE)
+    c.drawString(58*mm, H-26*mm, "AI")
+
+    # Header subtitle
+    c.setFont("Helvetica", 10)
+    c.setFillColor(colors.HexColor("#CCCCDD"))
+    c.drawString(22*mm, H-35*mm, "Enterprise AI Certification Platform  ·  aiwithai.online")
+
+    # Issued by — right of header
+    c.setFont("Helvetica-Bold", 9)
+    c.setFillColor(WHITE)
+    c.drawRightString(W-22*mm, H-26*mm, "LOVEUAD LTD")
+    c.setFont("Helvetica", 8)
+    c.setFillColor(colors.HexColor("#CCCCDD"))
+    c.drawRightString(W-22*mm, H-33*mm, f"Company No. 16838046  ·  Issued {issued_on}")
+
+    # Main body — "This certifies that"
+    c.setFont("Helvetica", 13)
+    c.setFillColor(SUBGREY)
+    c.drawCentredString(W/2, H-58*mm, "This certifies that")
+
+    # Name
+    c.setFont("Helvetica-Bold", 32)
+    c.setFillColor(NAVY)
+    c.drawCentredString(W/2, H-75*mm, user["name"])
+
+    # Gold line under name
+    c.setStrokeColor(GOLD)
+    c.setLineWidth(1.5)
+    name_w = min(len(user["name"]) * 17, 220*mm)
+    c.line(W/2 - name_w/2, H-79*mm, W/2 + name_w/2, H-79*mm)
+
+    # "has successfully completed"
+    c.setFont("Helvetica", 13)
+    c.setFillColor(SUBGREY)
+    c.drawCentredString(W/2, H-88*mm, "has successfully completed")
+
+    # Certificate title
+    c.setFont("Helvetica-Bold", 20)
+    c.setFillColor(NAVY)
+    c.drawCentredString(W/2, H-101*mm, cert_title)
+
+    # Score box
+    score_x = W/2 - 40*mm
+    score_y = H - 122*mm
+    c.setFillColor(NAVY)
+    c.roundRect(score_x, score_y, 80*mm, 16*mm, 3*mm, fill=1, stroke=0)
+    c.setFont("Helvetica-Bold", 13)
+    c.setFillColor(WHITE)
+    c.drawCentredString(W/2, score_y + 5*mm, f"Average Score: {avg}/100  ·  {levels_done} Levels Completed")
+
+    # Tier badge
+    tier_colors = {"foundation":"#1B3068","professional":"#0D6B4A","full":"#5B2D8E"}
+    tc = colors.HexColor(tier_colors.get(user["tier"],"#1B3068"))
+    c.setFillColor(tc)
+    badge_w = 55*mm
+    c.roundRect(W/2 - badge_w/2, H-140*mm, badge_w, 9*mm, 2*mm, fill=1, stroke=0)
+    c.setFont("Helvetica-Bold", 9)
+    c.setFillColor(WHITE)
+    tier_label = labels.get(user["tier"], "CEAL")
+    c.drawCentredString(W/2, H-135*mm, tier_label.upper())
+
+    # Footer — signature area
+    sig_y = 22*mm
+    # Left: director signature line
+    c.setStrokeColor(NAVY)
+    c.setLineWidth(0.75)
+    c.line(22*mm, sig_y+10*mm, 80*mm, sig_y+10*mm)
+    c.setFont("Helvetica-Bold", 9)
+    c.setFillColor(DARK)
+    c.drawString(22*mm, sig_y+5*mm, "Director, LOVEUAD LTD")
+    c.setFont("Helvetica", 8)
+    c.setFillColor(SUBGREY)
+    c.drawString(22*mm, sig_y+1*mm, "Company No. 16838046")
+
+    # Right: verify URL
+    c.setFont("Helvetica", 8)
+    c.setFillColor(SUBGREY)
+    c.drawRightString(W-22*mm, sig_y+5*mm, f"Verify: aiwithai.online/verify/{user.get('id','')}")
+    c.drawRightString(W-22*mm, sig_y+1*mm, f"Email: {user['email']}")
+
+    # Centre: date
+    c.setFont("Helvetica", 9)
+    c.setFillColor(SUBGREY)
+    c.drawCentredString(W/2, sig_y+5*mm, f"Issued on {issued_on}")
+
+    c.save()
+    buf.seek(0)
+
+    from fastapi.responses import StreamingResponse
+    filename = f"CEAL_Certificate_{user['name'].replace(' ','_')}.pdf"
+    return StreamingResponse(
+        buf,
+        media_type="application/pdf",
+        headers={"Content-Disposition": f"attachment; filename={filename}"}
+    )
