@@ -36,10 +36,6 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 def root():
     return FileResponse("static/platform.html")
 
-@app.options("/{rest_of_path:path}")
-async def preflight(rest_of_path: str):
-    return {}
-
 # ── MODELS ────────────────────────────────────────────────────────────────────
 class RegisterReq(BaseModel):
     name: str
