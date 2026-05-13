@@ -1,0 +1,970 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI with AI — CEAL Certification Platform</title>
+<style>
+  /* ── CHANGE THIS TO YOUR KOYEB URL ── */
+  :root { --api: "https://your-app.koyeb.app"; }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', -apple-system, system-ui, sans-serif; background: #F5F4EF; color: #1C1830; }
+
+  /* Layout */
+  .nav { background:#fff; border-bottom:1px solid #DDD8CE; padding:0 32px; height:60px; display:flex; align-items:center; justify-content:space-between; position:sticky; top:0; z-index:50; }
+  .page { max-width:1100px; margin:0 auto; padding:32px 24px; }
+  .page-sm { max-width:700px; margin:0 auto; padding:28px 24px; }
+  .page-xs { max-width:480px; margin:0 auto; padding:28px 24px; }
+
+  /* Logo */
+  .logo { font-family:Georgia,serif; font-size:18px; color:#12204A; letter-spacing:-0.02em; }
+  .logo span { color:#B87200; }
+
+  /* Cards */
+  .card { background:#fff; border:1px solid #DDD8CE; border-radius:10px; padding:24px; }
+  .card-sm { background:#fff; border:1px solid #DDD8CE; border-radius:8px; padding:18px; }
+
+  /* Buttons */
+  .btn { border:none; border-radius:6px; padding:10px 20px; font-size:14px; font-weight:500; cursor:pointer; font-family:inherit; }
+  .btn-navy { background:#1B3068; color:#fff; }
+  .btn-navy:hover { background:#12204A; }
+  .btn-green { background:#0D6B4A; color:#fff; }
+  .btn-green:hover { background:#095538; }
+  .btn-ghost { background:none; border:none; font-size:14px; color:#4A4862; cursor:pointer; padding:6px 0; font-family:inherit; }
+  .btn-full { width:100%; padding:13px; font-size:15px; }
+
+  /* Badges */
+  .badge { display:inline-block; padding:2px 9px; border-radius:20px; font-size:11px; font-weight:700; letter-spacing:0.05em; text-transform:uppercase; }
+  .badge-navy { background:#EAF0FB; color:#1B3068; }
+  .badge-green { background:#E8F5F0; color:#0D6B4A; }
+  .badge-amber { background:#FFF3D0; color:#8B6000; }
+  .badge-red { background:#FBE8E8; color:#B02020; }
+  .badge-purple { background:#F0EAF8; color:#5B2D8E; }
+  .badge-score-good { background:#E8F5F0; color:#0D6B4A; }
+  .badge-score-mid { background:#FFF3D0; color:#8B6000; }
+  .badge-score-low { background:#FBE8E8; color:#B02020; }
+
+  /* Forms */
+  .field { margin-bottom:16px; }
+  .field label { display:block; font-size:13px; color:#73718A; font-weight:500; margin-bottom:5px; }
+  .field input, .field textarea { width:100%; padding:10px 12px; border:1px solid #DDD8CE; border-radius:6px; font-size:14px; font-family:inherit; color:#1C1830; outline:none; resize:vertical; }
+  .field input:focus, .field textarea:focus { border-color:#1B3068; }
+
+  /* Progress bar */
+  .pbar-wrap { height:5px; background:#EEEAE3; border-radius:5px; overflow:hidden; }
+  .pbar-fill { height:100%; border-radius:5px; transition:width 0.4s; }
+
+  /* Module cards grid */
+  .mod-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:16px; }
+  .mod-card { background:#fff; border:1px solid #DDD8CE; border-radius:10px; padding:20px; cursor:pointer; transition:all 0.15s; box-shadow:0 1px 3px rgba(0,0,0,0.04); }
+  .mod-card:hover { box-shadow:0 6px 20px rgba(0,0,0,0.09); transform:translateY(-2px); }
+  .mod-card.locked { opacity:0.5; cursor:default; }
+  .mod-card.locked:hover { box-shadow:0 1px 3px rgba(0,0,0,0.04); transform:none; }
+
+  /* Level list */
+  .level-row { background:#fff; border:1px solid #DDD8CE; border-left:3px solid #DDD8CE; border-radius:8px; padding:16px; margin-bottom:9px; cursor:pointer; display:flex; align-items:center; gap:14px; transition:all 0.15s; }
+  .level-row:hover { box-shadow:0 3px 12px rgba(0,0,0,0.07); }
+  .level-num { width:34px; height:34px; border-radius:50%; background:#EEEAE3; display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:700; color:#73718A; flex-shrink:0; }
+  .level-num.done { background:#0D6B4A; color:#fff; font-size:15px; }
+
+  /* Chat */
+  .chat-wrap { flex:1; overflow-y:auto; padding:20px; display:flex; flex-direction:column; gap:12px; }
+  .chat-msg { display:flex; align-items:flex-start; gap:8px; }
+  .chat-msg.user { justify-content:flex-end; }
+  .chat-bubble { max-width:76%; padding:11px 15px; font-size:14px; line-height:1.65; white-space:pre-wrap; }
+  .chat-bubble.ai { background:#fff; border:1px solid #DDD8CE; border-radius:2px 12px 12px 12px; color:#1C1830; }
+  .chat-bubble.user { background:#1B3068; color:#fff; border-radius:12px 12px 2px 12px; }
+  .chat-ai-icon { width:26px; height:26px; background:#1B3068; border-radius:7px; display:flex; align-items:center; justify-content:center; font-size:10px; color:#fff; font-weight:700; flex-shrink:0; margin-top:2px; }
+  .chat-input-wrap { padding:0 20px 16px; }
+  .chat-input-box { background:#fff; border:1px solid #DDD8CE; border-radius:10px; padding:10px; display:flex; gap:8px; align-items:flex-end; }
+  .chat-input-box textarea { flex:1; border:none; outline:none; resize:none; font-size:14px; font-family:inherit; color:#1C1830; line-height:1.5; }
+
+  /* Drag and drop */
+  .dnd-zone { min-height:120px; border:2px dashed #DDD8CE; border-radius:8px; padding:12px; transition:all 0.15s; }
+  .dnd-zone.over { border-color:#1B3068; background:#EAF0FB; }
+  .dnd-item { background:#fff; border:1px solid #DDD8CE; border-radius:6px; padding:8px 11px; font-size:12px; color:#1C1830; cursor:grab; user-select:none; margin-bottom:5px; }
+  .dnd-item:active { cursor:grabbing; }
+
+  /* Ghost warning */
+  .ghost-warn { background:#FFFAEE; border:1px solid #E8C860; border-radius:8px; padding:10px 14px; margin-bottom:14px; display:flex; gap:10px; font-size:13px; color:#7A5800; }
+  .ghost-fail { background:#FBE8E8; border:1px solid #E86060; border-radius:8px; padding:10px 14px; margin-bottom:14px; font-size:13px; color:#B02020; }
+
+  /* Eval result */
+  .eval-box { background:#fff; border-radius:8px; padding:14px; margin-top:14px; display:flex; gap:10px; align-items:flex-start; }
+  .eval-box.pass { border:1px solid #0D6B4A; }
+  .eval-box.fail { border:1px solid #B02020; }
+
+  /* Checklist */
+  .check-item { background:#fff; border:1px solid #DDD8CE; border-radius:8px; padding:12px 15px; cursor:pointer; display:flex; gap:11px; align-items:flex-start; margin-bottom:8px; transition:all 0.15s; }
+  .check-item:hover { border-color:#1B3068; }
+  .check-box { width:19px; height:19px; border-radius:4px; border:2px solid #DDD8CE; display:flex; align-items:center; justify-content:center; font-size:11px; flex-shrink:0; margin-top:1px; transition:all 0.15s; }
+  .check-box.checked { background:#0D6B4A; border-color:#0D6B4A; color:#fff; }
+
+  /* Defend */
+  .defend-ctx { background:#1B3068; border-radius:10px; padding:18px 22px; margin-bottom:22px; color:#fff; }
+  .defend-q { background:#fff; border:1px solid #DDD8CE; border-radius:8px; padding:18px; margin-bottom:12px; }
+
+  /* Tier selection */
+  .tier-opt { background:#fff; border:2px solid #DDD8CE; border-radius:10px; padding:18px; margin-bottom:10px; cursor:pointer; position:relative; transition:border-color 0.15s; }
+  .tier-opt.selected { border-color:#1B3068; }
+  .tier-opt .popular { position:absolute; top:-1px; right:14px; background:#0D6B4A; color:#fff; font-size:10px; font-weight:700; padding:2px 7px; border-radius:0 0 5px 5px; letter-spacing:0.06em; }
+
+  /* Score ring (SVG) */
+  .ring-wrap { display:inline-block; }
+
+  /* Screens */
+  .screen { display:none; }
+  .screen.active { display:block; }
+
+  /* Flex helpers */
+  .flex { display:flex; }
+  .flex-center { display:flex; align-items:center; }
+  .flex-between { display:flex; align-items:center; justify-content:space-between; }
+  .gap-8 { gap:8px; }
+  .gap-12 { gap:12px; }
+  .gap-16 { gap:16px; }
+  .gap-24 { gap:24px; }
+  .wrap { flex-wrap:wrap; }
+
+  /* Typography */
+  .h1 { font-family:Georgia,serif; font-size:28px; font-weight:400; line-height:1.25; color:#1C1830; }
+  .h2 { font-family:Georgia,serif; font-size:22px; font-weight:400; color:#1C1830; }
+  .h3 { font-size:15px; font-weight:600; color:#1C1830; }
+  .sub { font-size:14px; color:#4A4862; line-height:1.7; }
+  .muted { font-size:13px; color:#73718A; }
+
+  /* Spinner */
+  @keyframes spin { to { transform:rotate(360deg); } }
+  @keyframes pulse { 0%,100%{opacity:.3} 50%{opacity:1} }
+  .dot { width:6px; height:6px; border-radius:50%; background:#73718A; animation:pulse 1.2s infinite; display:inline-block; margin:0 2px; }
+  .dot:nth-child(2){animation-delay:.2s}
+  .dot:nth-child(3){animation-delay:.4s}
+
+  /* Level header */
+  .lv-header { background:#fff; border-bottom:1px solid #DDD8CE; padding:0 24px; height:60px; display:flex; align-items:center; gap:12px; position:sticky; top:0; z-index:50; }
+
+  /* Misc */
+  .err { color:#B02020; font-size:13px; margin-bottom:10px; }
+  .full-h { min-height:100vh; display:flex; flex-direction:column; }
+</style>
+</head>
+<body>
+
+<!-- ── SCREENS ──────────────────────────────────────────────────────────────── -->
+
+<div id="screen-login" class="screen active">
+  <div class="nav"><div class="logo">AI <span>with</span> AI</div><span class="muted">Enterprise AI Certification · CEAL</span></div>
+  <div style="max-width:1100px;margin:0 auto;padding:40px 24px;display:flex;gap:56px;flex-wrap:wrap">
+    <div style="flex:1 1 260px">
+      <div style="display:inline-block;background:#1B3068;border-radius:8px;padding:8px 16px;margin-bottom:20px"><span class="logo" style="font-size:22px;color:#fff">AI <span>with</span> AI</span></div>
+      <h1 class="h1" style="margin-bottom:12px">Become a Certified<br>Enterprise AI Lead</h1>
+      <p class="sub" style="margin-bottom:24px">6 modules · 30 simulation levels · Agentic AI consultant.<br>Built for senior developers facing the AI transition.</p>
+      <div class="flex gap-24" style="margin-bottom:24px">
+        <div><div style="font-family:Georgia,serif;font-size:20px;color:#1B3068">30</div><div class="muted">Levels</div></div>
+        <div><div style="font-family:Georgia,serif;font-size:20px;color:#1B3068">AI</div><div class="muted">Agent Guided</div></div>
+        <div><div style="font-family:Georgia,serif;font-size:20px;color:#1B3068">CEAL</div><div class="muted">Certificate</div></div>
+      </div>
+      <div id="login-module-list"></div>
+    </div>
+    <div style="flex:1 1 340px;max-width:420px">
+      <div id="login-step1" class="card">
+        <h2 class="h2" style="margin-bottom:20px">Create your account</h2>
+        <div class="field"><label>Full name</label><input id="reg-name" placeholder="Your name"></div>
+        <div class="field"><label>Email</label><input id="reg-email" type="email" placeholder="you@company.com"></div>
+        <button class="btn btn-navy btn-full" onclick="loginStep2()">Continue →</button>
+      </div>
+      <div id="login-step2" style="display:none">
+        <h2 class="h2" style="margin-bottom:16px">Choose your programme</h2>
+        <div id="tier-options"></div>
+        <div id="reg-err" class="err"></div>
+        <button class="btn btn-navy btn-full" id="reg-btn" onclick="doRegister()">Start Programme →</button>
+        <p class="muted" style="text-align:center;margin-top:12px">Certificate issued by LOVEUAD LTD · LinkedIn ready</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="screen-dashboard" class="screen">
+  <div class="nav">
+    <div class="logo">AI <span>with</span> AI</div>
+    <div class="flex-center gap-12">
+      <span id="dash-tier-badge"></span>
+      <span class="muted" id="dash-username"></span>
+      <button class="btn-ghost" onclick="logout()">Sign out</button>
+    </div>
+  </div>
+  <div class="page">
+    <div class="flex-between wrap gap-16" style="margin-bottom:28px">
+      <div>
+        <h1 class="h2" id="dash-welcome" style="margin-bottom:3px"></h1>
+        <p class="muted" id="dash-progress-text"></p>
+      </div>
+      <div style="min-width:200px;flex:1;max-width:220px">
+        <div class="flex-between" style="margin-bottom:4px"><span class="muted" style="font-size:11px">Progress</span><span id="dash-pct" style="font-size:11px;font-weight:700"></span></div>
+        <div class="pbar-wrap"><div class="pbar-fill" id="dash-pbar" style="width:0%"></div></div>
+      </div>
+    </div>
+    <div class="mod-grid" id="mod-grid"></div>
+  </div>
+</div>
+
+<div id="screen-module" class="screen">
+  <div class="nav">
+    <div class="flex-center gap-12"><button class="btn-ghost" onclick="showDash()">← Back</button><span style="color:#DDD8CE">|</span><div class="logo">AI <span>with</span> AI</div></div>
+  </div>
+  <div class="page-sm">
+    <div class="card" id="mod-header" style="margin-bottom:16px;border-top:4px solid #1B3068"></div>
+    <div id="ghost-banner"></div>
+    <div id="level-list"></div>
+  </div>
+</div>
+
+<div id="screen-level" class="screen full-h">
+  <div class="lv-header" id="lv-header"></div>
+  <div id="lv-body" style="flex:1;overflow:hidden"></div>
+</div>
+
+<!-- ── SCRIPTS ──────────────────────────────────────────────────────────────── -->
+<script>
+// ── CONFIG ──────────────────────────────────────────────────────────────────
+const API = "https://your-app.koyeb.app" // ← CHANGE THIS
+
+// ── STATE ────────────────────────────────────────────────────────────────────
+let STATE = {
+  user: null, token: null, tier: null,
+  progress: {}, scores: {}, decisions: {}, ghostMissed: false,
+  activeMod: null, activeLv: null,
+  selectedTier: 'professional'
+}
+
+const MODULES = [
+  {id:1,code:"M1",title:"Work Redesign & Strategy",tagline:"Break legacy workflows. Let AI hit the P&L.",tier:"foundation",
+   levels:[{id:1,type:"explore",title:"AI Readiness Audit"},{id:2,type:"design",title:"Redesign the Org Chart"},{id:3,type:"comply",title:"Policy Obligations"},{id:4,type:"defend",title:"Board Justification"},{id:5,type:"future",title:"12-Month Roadmap"}]},
+  {id:2,code:"M2",title:"AI-Led SDLC",tagline:"From coder to articulator of intent.",tier:"foundation",
+   levels:[{id:1,type:"explore",title:"Write Your Spec Kit"},{id:2,type:"design",title:"Map the SDLC Flow"},{id:3,type:"comply",title:"Spec Security Audit"},{id:4,type:"defend",title:"Speed vs Tech Debt"},{id:5,type:"future",title:"AI-Native Dev Workflow"}]},
+  {id:3,code:"M3",title:"RAG & Data Moat",tagline:"Build thick products. Not thin wrappers.",tier:"foundation",ghost:true,
+   levels:[{id:1,type:"explore",title:"Identify Your Moat"},{id:2,type:"design",title:"Build RAG Pipeline"},{id:3,type:"comply",title:"Data Sensitivity Audit",ghost:true},{id:4,type:"defend",title:"Architecture Defence"},{id:5,type:"future",title:"Scale to 10×"}]},
+  {id:4,code:"M4",title:"Agentic Workflows",tagline:"From UX to AX. Autonomous digital workforces.",tier:"professional",
+   levels:[{id:1,type:"explore",title:"First Planner Agent"},{id:2,type:"design",title:"Multi-Agent Pipeline"},{id:3,type:"comply",title:"Human-in-the-Loop"},{id:4,type:"defend",title:"Autonomy Justification"},{id:5,type:"future",title:"Centaur Team Design"}]},
+  {id:5,code:"M5",title:"Governance OS",tagline:"EU AI Act + ISO 42001. Compliance that scales.",tier:"professional",ghost:true,
+   levels:[{id:1,type:"explore",title:"Risk Tier Audit"},{id:2,type:"design",title:"Build Conformity File"},{id:3,type:"comply",title:"Mock Regulator Audit",ghost:true},{id:4,type:"defend",title:"Data Breach Crisis"},{id:5,type:"future",title:"Governance Roadmap"}]},
+  {id:6,code:"M6",title:"ROI & DX Core 4",tagline:"Prove ₹10.30 return per ₹1.00 invested.",tier:"full",
+   levels:[{id:1,type:"explore",title:"Reclaimed Hours Calculator"},{id:2,type:"design",title:"DX Core 4 Dashboard"},{id:3,type:"comply",title:"Audit Validation"},{id:4,type:"defend",title:"CFO Presentation"},{id:5,type:"future",title:"3-Year ROI Model"}]},
+]
+
+const TIERS = {
+  foundation:{label:"CEAL Foundation",price:"₹8,000",mods:[1,2,3],color:"#1B3068",bg:"#EAF0FB"},
+  professional:{label:"CEAL Professional",price:"₹10,000",mods:[1,2,3,4,5],color:"#0D6B4A",bg:"#E8F5F0"},
+  full:{label:"CEAL Full Certification",price:"₹15,000",mods:[1,2,3,4,5,6],color:"#5B2D8E",bg:"#F0EAF8"},
+}
+const LV_BADGE = {
+  explore:{label:"Explore",cls:"badge-navy"},
+  design:{label:"Design",cls:"badge-green"},
+  comply:{label:"Comply",cls:"badge-amber"},
+  defend:{label:"Defend",cls:"badge-red"},
+  future:{label:"Future Proof",cls:"badge-purple"},
+}
+const LV_COLOR = {explore:"#1B3068",design:"#0D6B4A",comply:"#8B6000",defend:"#B02020",future:"#5B2D8E"}
+
+// ── API ───────────────────────────────────────────────────────────────────────
+async function post(path, body) {
+  const r = await fetch(API+path, {method:"POST",headers:{"Content-Type":"application/json","x-token":STATE.token||""},body:JSON.stringify(body)})
+  return r.json()
+}
+async function get(path) {
+  const r = await fetch(API+path, {headers:{"x-token":STATE.token||""}})
+  return r.json()
+}
+
+// ── INIT ──────────────────────────────────────────────────────────────────────
+window.onload = function() {
+  buildLoginModuleList()
+  buildTierOptions()
+  const saved = localStorage.getItem("ceal_session")
+  if(saved) {
+    try {
+      const d = JSON.parse(saved)
+      STATE.user = d.user; STATE.token = d.token; STATE.tier = d.tier
+      loadProgress().then(() => showDash())
+    } catch(e) {}
+  }
+}
+
+function buildLoginModuleList() {
+  const el = document.getElementById("login-module-list")
+  el.innerHTML = MODULES.map(m => {
+    const tc = TIERS[m.tier]
+    return `<div style="display:flex;gap:10px;margin-bottom:8px;align-items:flex-start">
+      <div style="width:26px;height:26px;border-radius:6px;background:${tc.bg};display:flex;align-items:center;justify-content:center;flex-shrink:0">
+        <span style="font-size:10px;font-weight:700;color:${tc.color}">${m.code}</span>
+      </div>
+      <div><div style="font-size:13px;font-weight:600">${m.title}</div><div class="muted">${m.tagline}</div></div>
+    </div>`
+  }).join("")
+}
+
+function buildTierOptions() {
+  const el = document.getElementById("tier-options")
+  el.innerHTML = Object.entries(TIERS).map(([k,tc]) => `
+    <div class="tier-opt${k==='professional'?' selected':''}" id="tier-${k}" onclick="selectTier('${k}')">
+      ${k==='professional'?'<div class="popular">POPULAR</div>':''}
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:3px">
+        <div style="display:flex;align-items:center;gap:8px">
+          <div id="tier-dot-${k}" style="width:15px;height:15px;border-radius:50%;border:2px solid ${tc.color};background:${k==='professional'?tc.color:'transparent'};transition:background 0.15s"></div>
+          <span style="font-size:14px;font-weight:600">${tc.label}</span>
+        </div>
+        <span style="font-family:Georgia,serif;font-size:18px;color:${tc.color}">${tc.price}</span>
+      </div>
+      <div class="muted" style="padding-left:23px">Modules 1–${tc.mods.length} · ${tc.mods.length*5} simulation levels</div>
+    </div>`).join("")
+}
+
+function selectTier(k) {
+  STATE.selectedTier = k
+  Object.keys(TIERS).forEach(t => {
+    document.getElementById("tier-"+t).className = "tier-opt"+(t===k?" selected":"")
+    document.getElementById("tier-dot-"+t).style.background = t===k ? TIERS[t].color : "transparent"
+  })
+}
+
+function loginStep2() {
+  const name = document.getElementById("reg-name").value.trim()
+  const email = document.getElementById("reg-email").value.trim()
+  if(!name || !email) { alert("Please enter your name and email"); return }
+  document.getElementById("login-step1").style.display = "none"
+  document.getElementById("login-step2").style.display = "block"
+}
+
+async function doRegister() {
+  const name = document.getElementById("reg-name").value.trim()
+  const email = document.getElementById("reg-email").value.trim()
+  const btn = document.getElementById("reg-btn")
+  btn.textContent = "Creating account…"; btn.disabled = true
+  document.getElementById("reg-err").textContent = ""
+  try {
+    const d = await post("/api/register", {name, email, tier: STATE.selectedTier})
+    if(!d.token) throw new Error(d.detail || "Registration failed")
+    STATE.user = d.user; STATE.token = d.token; STATE.tier = d.user.tier
+    localStorage.setItem("ceal_session", JSON.stringify({user:d.user,token:d.token,tier:d.user.tier}))
+    await loadProgress()
+    showDash()
+  } catch(e) {
+    document.getElementById("reg-err").textContent = e.message
+    btn.textContent = "Start Programme →"; btn.disabled = false
+  }
+}
+
+async function loadProgress() {
+  try {
+    const d = await get("/api/progress")
+    STATE.progress = d.progress || {}
+    STATE.scores = d.scores || {}
+    STATE.decisions = d.decisions || {}
+    STATE.ghostMissed = d.ghost_missed || false
+  } catch(e) {}
+}
+
+function logout() {
+  localStorage.removeItem("ceal_session")
+  STATE = {user:null,token:null,tier:null,progress:{},scores:{},decisions:{},ghostMissed:false,activeMod:null,activeLv:null,selectedTier:"professional"}
+  showScreen("login")
+}
+
+// ── SCREENS ───────────────────────────────────────────────────────────────────
+function showScreen(name) {
+  document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"))
+  document.getElementById("screen-"+name).classList.add("active")
+}
+
+function showDash() {
+  const tc = TIERS[STATE.tier] || TIERS.foundation
+  const allowed = tc.mods
+  const total = allowed.length * 5
+  const done = MODULES.reduce((a,m) => a + (allowed.includes(m.id) ? Object.values(STATE.progress[m.id]||{}).filter(v=>v==="completed").length : 0), 0)
+
+  document.getElementById("dash-username").textContent = STATE.user.name
+  document.getElementById("dash-welcome").textContent = "Welcome back, " + STATE.user.name.split(" ")[0]
+  document.getElementById("dash-progress-text").textContent = done + " of " + total + " levels complete · " + tc.label
+  document.getElementById("dash-pct").textContent = Math.round((done/total)*100||0) + "%"
+  document.getElementById("dash-pct").style.color = tc.color
+  document.getElementById("dash-pbar").style.width = (done/total*100) + "%"
+  document.getElementById("dash-pbar").style.background = tc.color
+  document.getElementById("dash-tier-badge").innerHTML = badge(tc.label, tc.color, tc.bg)
+
+  const grid = document.getElementById("mod-grid")
+  grid.innerHTML = MODULES.map(mod => {
+    const locked = !allowed.includes(mod.id)
+    const mc = TIERS[mod.tier].color
+    const mcbg = TIERS[mod.tier].bg
+    const modDone = Object.values(STATE.progress[mod.id]||{}).filter(v=>v==="completed").length
+    const avgScore = getAvgScore(mod.id)
+    const bars = mod.levels.map(l => {
+      const d = STATE.progress[mod.id]?.[l.id]==="completed"
+      return `<div title="${l.title}" style="flex:1;height:4px;border-radius:2px;background:${d?LV_COLOR[l.type]:"#EEEAE3"};transition:background 0.3s"></div>`
+    }).join("")
+    return `<div class="mod-card${locked?' locked':''}" onclick="${locked?'':(`showMod(${mod.id})`)}">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px">
+        <div>
+          <div style="font-size:10px;font-weight:700;color:#73718A;letter-spacing:0.06em;text-transform:uppercase;margin-bottom:3px">${mod.code}</div>
+          <div style="font-size:14px;font-weight:600">${mod.title}</div>
+        </div>
+        <div style="display:flex;gap:5px;align-items:center">
+          ${mod.ghost&&!locked?'<span title="Ghost Data">👻</span>':''}
+          ${locked?'<span>🔒</span>':ring(modDone,5,38,3,mc)}
+        </div>
+      </div>
+      <p class="muted" style="margin-bottom:10px;line-height:1.5">${mod.tagline}</p>
+      ${avgScore?`<div style="margin-bottom:8px">${scoreBadge(avgScore)}</div>`:''}
+      <div style="display:flex;gap:4px">${bars}</div>
+    </div>`
+  }).join("")
+  showScreen("dashboard")
+}
+
+function showMod(modId) {
+  const mod = MODULES.find(m=>m.id===modId)
+  STATE.activeMod = mod
+  const mc = TIERS[mod.tier].color
+  const done = Object.values(STATE.progress[mod.id]||{}).filter(v=>v==="completed").length
+
+  document.getElementById("mod-header").style.borderTopColor = mc
+  document.getElementById("mod-header").innerHTML = `
+    <div style="display:flex;justify-content:space-between;align-items:flex-start">
+      <div>
+        <div style="font-size:10px;font-weight:700;color:${mc};letter-spacing:0.08em;text-transform:uppercase;margin-bottom:5px">${mod.code} · ${TIERS[mod.tier].label}</div>
+        <h1 class="h2" style="margin-bottom:6px">${mod.title}</h1>
+        <p class="sub">${mod.tagline}</p>
+      </div>
+      ${ring(done,5,50,4,mc)}
+    </div>`
+
+  const gb = document.getElementById("ghost-banner")
+  if(mod.ghost) {
+    const msg = mod.id===5&&STATE.ghostMissed
+      ? "⚠ Unresolved data from Module 3 — Level 3 audit will fail."
+      : "A hidden sensitive node is introduced in Level 3. Miss it and it cascades into Module 5."
+    gb.innerHTML = `<div class="ghost-warn"><span>👻</span><div><div style="font-weight:600">${mod.id===5&&STATE.ghostMissed?'Ghost Data violation detected':'Ghost Data mechanic active'}</div><div style="margin-top:1px">${msg}</div></div></div>`
+  } else gb.innerHTML = ""
+
+  const ll = document.getElementById("level-list")
+  ll.innerHTML = mod.levels.map(level => {
+    const lc = LV_BADGE[level.type]
+    const isDone = STATE.progress[mod.id]?.[level.id]==="completed"
+    const lvScore = STATE.scores[mod.id]?.[level.id]
+    return `<div class="level-row" style="border-left-color:${isDone?LV_COLOR[level.type]:'#DDD8CE'}" onclick="showLevel(${mod.id},${level.id})">
+      <div class="level-num${isDone?' done':''}">${isDone?'✓':level.id}</div>
+      <div style="flex:1">
+        <div style="display:flex;align-items:center;gap:7px;margin-bottom:3px">
+          <span class="badge ${lc.cls}">${lc.label}</span>
+          ${level.ghost?'<span style="font-size:11px;background:#FFF3D0;color:#8B6000;padding:1px 7px;border-radius:10px;font-weight:700">👻 GHOST</span>':''}
+          ${mod.id===5&&level.id===3&&STATE.ghostMissed?'<span style="font-size:11px;background:#FBE8E8;color:#B02020;padding:1px 7px;border-radius:10px;font-weight:700">⚠ WILL FAIL</span>':''}
+        </div>
+        <div style="font-size:13px;font-weight:600">${level.title}</div>
+      </div>
+      ${lvScore?scoreBadge(lvScore):''}
+      <span style="color:#DDD8CE;font-size:18px">›</span>
+    </div>`
+  }).join("")
+  showScreen("module")
+}
+
+function showLevel(modId, levelId) {
+  const mod = MODULES.find(m=>m.id===modId)
+  const level = mod.levels.find(l=>l.id===levelId)
+  STATE.activeMod = mod; STATE.activeLv = level
+  const isDone = STATE.progress[mod.id]?.[level.id]==="completed"
+  const lc = LV_BADGE[level.type]
+
+  document.getElementById("lv-header").innerHTML = `
+    <button class="btn-ghost" onclick="showMod(${mod.id})">← Back</button>
+    <span style="color:#DDD8CE">|</span>
+    <span class="badge ${lc.cls}">${lc.label}</span>
+    <span style="font-size:14px;font-weight:600;flex:1">${level.title}</span>
+    ${isDone?`<span class="badge badge-green">Completed ✓</span>`:''}
+    <span id="lv-score-badge"></span>
+    <button id="lv-complete-btn" style="display:none" class="btn btn-green" onclick="completeLevel()">Complete ✓</button>`
+
+  const body = document.getElementById("lv-body")
+  body.style.cssText = "flex:1;overflow:auto"
+
+  if(level.type==="explore") renderExplore(mod, level, isDone, body)
+  else if(level.type==="design") renderDesign(mod, level, isDone, body)
+  else if(level.type==="comply") renderComply(mod, level, isDone, body)
+  else if(level.type==="defend") renderDefend(mod, level, isDone, body)
+  else if(level.type==="future") renderFuture(mod, level, isDone, body)
+
+  showScreen("level")
+}
+
+// ── COMPLETE LEVEL ────────────────────────────────────────────────────────────
+let pendingCompletion = {score:0, ghostCaught:true, decisions:{}}
+
+async function completeLevel() {
+  const mod = STATE.activeMod, level = STATE.activeLv
+  const mk = String(mod.id), lk = String(level.id)
+  if(!STATE.progress[mk]) STATE.progress[mk] = {}
+  STATE.progress[mk][lk] = "completed"
+  if(!STATE.scores[mk]) STATE.scores[mk] = {}
+  STATE.scores[mk][lk] = pendingCompletion.score
+  if(mod.id===3&&level.id===3) STATE.ghostMissed = !pendingCompletion.ghostCaught
+  try {
+    await post("/api/progress", {
+      module_id:mod.id, level_id:level.id,
+      ghost_caught:pendingCompletion.ghostCaught,
+      score:pendingCompletion.score,
+      decisions:pendingCompletion.decisions
+    })
+  } catch(e) {}
+  showMod(mod.id)
+}
+
+function setCanComplete(score, ghostCaught, decisions) {
+  pendingCompletion = {score:score||0, ghostCaught:ghostCaught!==false, decisions:decisions||{}}
+  document.getElementById("lv-complete-btn").style.display = "block"
+  if(score) document.getElementById("lv-score-badge").innerHTML = scoreBadge(score)
+}
+
+// ── EXPLORE ───────────────────────────────────────────────────────────────────
+function renderExplore(mod, level, isDone, body) {
+  body.innerHTML = `
+    <div id="explore-start" style="flex:1;display:flex;align-items:center;justify-content:center;padding:32px">
+      <div style="text-align:center;max-width:380px">
+        <div style="width:60px;height:60px;background:#1B3068;border-radius:14px;display:flex;align-items:center;justify-content:center;margin:0 auto 18px;font-size:26px">🎯</div>
+        <h2 class="h2" style="margin-bottom:10px">CEAL AI Consultant</h2>
+        <p class="sub" style="margin-bottom:5px">Powered by Gemini. Your agent evaluates every answer, scores your decisions, and references your previous modules.</p>
+        <p class="muted" style="margin-bottom:24px">4+ exchanges to unlock completion.</p>
+        <button class="btn btn-navy" style="padding:12px 30px;font-size:15px" onclick="startExplore(${mod.id})">Begin Session →</button>
+      </div>
+    </div>
+    <div id="explore-chat" style="display:none;flex:1;display:none;flex-direction:column;height:calc(100vh - 60px)">
+      <div id="chat-msgs" class="chat-wrap" style="flex:1;max-height:calc(100vh - 180px)"></div>
+      <div class="chat-input-wrap">
+        <p id="chat-turns-msg" class="muted" style="text-align:center;margin-bottom:6px;font-size:12px"></p>
+        <div class="chat-input-box">
+          <textarea id="chat-input" rows="2" placeholder="Type your answer… (Enter to send)" onkeydown="chatKeydown(event)"></textarea>
+          <button class="btn btn-navy" id="chat-send-btn" onclick="sendChat(${mod.id})">Send</button>
+        </div>
+      </div>
+    </div>`
+}
+
+let chatTurns = 0
+let chatFinalScore = null
+
+async function startExplore(modId) {
+  chatTurns = 0; chatFinalScore = null
+  document.getElementById("explore-start").style.display = "none"
+  const chatDiv = document.getElementById("explore-chat")
+  chatDiv.style.display = "flex"
+  chatDiv.style.flexDirection = "column"
+  appendChatLoading()
+  try {
+    const d = await post("/api/agent", {
+      module_id:modId, level_id:1,
+      messages:[{role:"user",content:"Begin the session."}],
+      user_decisions:STATE.decisions, ghost_missed:STATE.ghostMissed
+    })
+    removeChatLoading()
+    appendChatMsg("assistant", d.reply)
+    if(d.score) { chatFinalScore = d.score }
+  } catch(e) { removeChatLoading(); appendChatMsg("assistant","Ready to begin. Tell me about your current role and team.") }
+  updateTurnsMsg()
+}
+
+async function sendChat(modId) {
+  const input = document.getElementById("chat-input")
+  const msg = input.value.trim()
+  if(!msg) return
+  input.value = ""
+  appendChatMsg("user", msg)
+  appendChatLoading()
+  chatTurns++
+  updateTurnsMsg()
+  const allMsgs = getChatMessages()
+  try {
+    const d = await post("/api/agent", {
+      module_id:modId, level_id:STATE.activeLv.id,
+      messages:allMsgs, user_decisions:STATE.decisions, ghost_missed:STATE.ghostMissed
+    })
+    removeChatLoading()
+    appendChatMsg("assistant", d.reply)
+    if(d.score) chatFinalScore = d.score
+  } catch(e) { removeChatLoading(); appendChatMsg("assistant","Network error. Please retry.") }
+  updateTurnsMsg()
+  if(chatTurns>=4) setCanComplete(chatFinalScore, true, {})
+}
+
+function chatKeydown(e) {
+  if(e.key==="Enter"&&!e.shiftKey) { e.preventDefault(); document.getElementById("chat-send-btn").click() }
+}
+
+function getChatMessages() {
+  const bubbles = document.querySelectorAll(".chat-bubble")
+  return Array.from(bubbles).map(b => ({
+    role: b.classList.contains("user") ? "user" : "assistant",
+    content: b.textContent
+  }))
+}
+
+function appendChatMsg(role, content) {
+  const msgs = document.getElementById("chat-msgs")
+  const isAI = role==="assistant"
+  msgs.innerHTML += `<div class="chat-msg${isAI?'':' user'}">
+    ${isAI?'<div class="chat-ai-icon">AI</div>':''}
+    <div class="chat-bubble ${isAI?'ai':'user'}">${content.replace(/\n/g,'<br>')}</div>
+  </div>`
+  msgs.scrollTop = msgs.scrollHeight
+}
+
+function appendChatLoading() {
+  const msgs = document.getElementById("chat-msgs")
+  msgs.innerHTML += `<div class="chat-msg" id="chat-loading">
+    <div class="chat-ai-icon">AI</div>
+    <div class="chat-bubble ai"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
+  </div>`
+  msgs.scrollTop = msgs.scrollHeight
+}
+
+function removeChatLoading() {
+  const el = document.getElementById("chat-loading")
+  if(el) el.remove()
+}
+
+function updateTurnsMsg() {
+  const el = document.getElementById("chat-turns-msg")
+  if(!el) return
+  if(chatTurns<4) el.textContent = (4-chatTurns)+" more exchanges to unlock completion"
+  else el.textContent = ""
+}
+
+// ── DESIGN ────────────────────────────────────────────────────────────────────
+const DCFG = {
+  1:{title:"Redesign your org for AI speed",zones:[{id:"keep",label:"Keep — Human oversight",c:"#0D6B4A"},{id:"auto",label:"Automate — AI handles this",c:"#1B3068"},{id:"cut",label:"Eliminate — Legacy friction",c:"#B02020"}],items:["Security code review","Weekly status meetings","Manager tool sign-off","Automated test runs","Sprint planning","Manual deployments","Vulnerability approvals","Daily standups"]},
+  2:{title:"Place AI at each SDLC stage",zones:[{id:"plan",label:"Planning & Requirements",c:"#5B2D8E"},{id:"build",label:"Build & Code",c:"#1B3068"},{id:"test",label:"Test & QA",c:"#0D6B4A"},{id:"deploy",label:"Deploy & Monitor",c:"#8B6000"}],items:["AI requirement summariser","GitHub Copilot coding","AI test generation","CI/CD optimisation","NLP to spec","Real-time code review","Load simulation","AI incident root-cause"]},
+  3:{title:"Build your RAG data pipeline",zones:[{id:"ingest",label:"Ingest — Raw sources",c:"#1B3068"},{id:"clean",label:"Clean & Tag — Filter sensitive",c:"#8B6000"},{id:"index",label:"Index — Vector store",c:"#0D6B4A"},{id:"retrieve",label:"Retrieve — LLM context",c:"#5B2D8E"}],items:["Customer contracts","Employee PII records","Product documentation","Financial reports Q4","Public API responses","Internal Slack messages","Anonymised tickets","Knowledge base articles"]},
+  4:{title:"Build a multi-agent pipeline",zones:[{id:"plan",label:"Step 1 — Planner",c:"#1B3068"},{id:"research",label:"Step 2 — Researcher",c:"#5B2D8E"},{id:"write",label:"Step 3 — Writer/Coder",c:"#0D6B4A"},{id:"review",label:"Step 4 — Critic",c:"#B02020"}],items:["Decompose RFP","Draft response","Validate facts","Review compliance","Gather intelligence","Generate code","Executive summary","Brand check"]},
+  5:{title:"Build your AIMS conformity file",zones:[{id:"policy",label:"AI Policy & Objectives",c:"#1B3068"},{id:"risk",label:"Risk Assessment",c:"#B02020"},{id:"audit",label:"Audit Trails & Logs",c:"#0D6B4A"},{id:"training",label:"Staff Training Records",c:"#5B2D8E"}],items:["AI usage policy","Drift reports","Prompt injection tests","Bias assessment","Developer onboarding","GDPR impact assessment","Review checkpoint logs","Ethics training completion"]},
+  6:{title:"Build your DX Core 4 dashboard",zones:[{id:"speed",label:"Speed — Cycle time",c:"#1B3068"},{id:"eff",label:"Effectiveness — Output/hr",c:"#0D6B4A"},{id:"qual",label:"Quality — Defect rate",c:"#8B6000"},{id:"impact",label:"Business Impact",c:"#5B2D8E"}],items:["PR merge time","Lines of code/sprint","Bug escape rate","Feature to revenue","Code review time","Test coverage %","MTTR","Developer NPS"]},
+}
+
+let dndState = {placed:{}, dragging:null, cfg:null}
+
+function renderDesign(mod, level, isDone, body) {
+  const cfg = DCFG[mod.id]||DCFG[1]
+  dndState = {placed:{}, dragging:null, cfg}
+  body.innerHTML = `<div style="max-width:1060px;margin:0 auto;padding:24px">
+    <h2 class="h2" style="margin-bottom:4px">${cfg.title}</h2>
+    <p class="muted" style="margin-bottom:18px">Drag items to the correct zone.</p>
+    <div style="display:flex;gap:16px;align-items:flex-start;flex-wrap:wrap">
+      <div style="flex:0 0 190px">
+        <div style="font-size:11px;font-weight:700;color:#73718A;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:8px">Items to place →</div>
+        <div id="dnd-source"></div>
+      </div>
+      <div id="dnd-zones" style="flex:1;display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px"></div>
+    </div>
+    <div style="display:flex;align-items:center;gap:12px;margin-top:16px;padding:12px 16px;background:#fff;border:1px solid #DDD8CE;border-radius:8px">
+      <div style="flex:1"><div class="pbar-wrap"><div class="pbar-fill" id="dnd-pbar" style="width:0%;background:#1B3068"></div></div></div>
+      <span class="muted" id="dnd-count" style="font-size:12px;white-space:nowrap">0/${cfg.items.length} placed</span>
+      <button id="dnd-eval-btn" class="btn btn-navy" style="display:none;font-size:12px;padding:7px 14px" onclick="evalDesign(${mod.id},${level.id})">Get AI Score →</button>
+    </div>
+    <div id="dnd-eval-result"></div>
+  </div>`
+  renderDndSource()
+  renderDndZones()
+}
+
+function renderDndSource() {
+  const src = document.getElementById("dnd-source")
+  const unplaced = dndState.cfg.items.filter(i=>!Object.values(dndState.placed).flat().includes(i))
+  src.innerHTML = unplaced.map(item => `<div class="dnd-item" draggable="true" ondragstart="dndStart('${item}')" ondragend="dndEnd()">⠿ ${item}</div>`).join("")
+  if(!unplaced.length) src.innerHTML = '<div class="muted" style="font-style:italic;font-size:12px">All items placed ✓</div>'
+}
+
+function renderDndZones() {
+  const zones = document.getElementById("dnd-zones")
+  zones.innerHTML = dndState.cfg.zones.map(z => `
+    <div class="dnd-zone" id="zone-${z.id}" ondragover="event.preventDefault();dndOver('${z.id}')" ondragleave="dndLeave('${z.id}')" ondrop="dndDrop('${z.id}')">
+      <div style="font-size:11px;font-weight:700;color:${z.c};margin-bottom:8px">${z.label}</div>
+      <div id="zone-items-${z.id}">${(dndState.placed[z.id]||[]).map(item=>`<div class="dnd-item" draggable="true" style="background:${z.c}20;border-color:${z.c}60" ondragstart="dndStart('${item}')" ondragend="dndEnd()">${item}</div>`).join('')||'<div class="muted" style="font-size:11px;font-style:italic">Drop here</div>'}</div>
+    </div>`).join("")
+}
+
+function dndStart(item) { dndState.dragging = item }
+function dndEnd() { dndState.dragging = null; document.querySelectorAll(".dnd-zone").forEach(z=>z.classList.remove("over")) }
+function dndOver(zid) { document.getElementById("zone-"+zid).classList.add("over") }
+function dndLeave(zid) { document.getElementById("zone-"+zid).classList.remove("over") }
+function dndDrop(zid) {
+  if(!dndState.dragging) return
+  const item = dndState.dragging
+  Object.keys(dndState.placed).forEach(k=>{dndState.placed[k]=(dndState.placed[k]||[]).filter(i=>i!==item)})
+  if(!dndState.placed[zid]) dndState.placed[zid]=[]
+  dndState.placed[zid].push(item)
+  dndState.dragging = null
+  renderDndSource(); renderDndZones()
+  const total = Object.values(dndState.placed).flat().length
+  const max = dndState.cfg.items.length
+  document.getElementById("dnd-pbar").style.width = (total/max*100)+"%"
+  document.getElementById("dnd-count").textContent = total+"/"+max+" placed"
+  if(total >= Math.ceil(max*0.75)) document.getElementById("dnd-eval-btn").style.display = "block"
+}
+
+async function evalDesign(modId, levelId) {
+  const btn = document.getElementById("dnd-eval-btn")
+  btn.textContent = "Evaluating…"; btn.disabled = true
+  try {
+    const d = await post("/api/evaluate", {module_id:modId,level_id:levelId,level_type:"design",user_input:dndState.placed,ghost_missed:STATE.ghostMissed})
+    renderEvalResult(d, "dnd-eval-result")
+    setCanComplete(d.score, true, dndState.placed)
+  } catch(e) { setCanComplete(70, true, dndState.placed) }
+  btn.style.display = "none"
+}
+
+// ── COMPLY ────────────────────────────────────────────────────────────────────
+const CCFG = {
+  "1-3":{title:"Policy & Labour Law Compliance",items:[{id:1,text:"Headcount changes notified to HR 30 days in advance",crit:false},{id:2,text:"Redundancy process follows Employment Rights Act 1996",crit:true},{id:3,text:"AI tool deployment reviewed for GDPR data processing impacts",crit:true},{id:4,text:"Employee consultation documented for role redesign",crit:false},{id:5,text:"AI policy document reviewed and signed by CTO",crit:true}]},
+  "2-3":{title:"Spec Security & Data Handling Audit",items:[{id:1,text:"No hardcoded credentials or API keys in spec",crit:true},{id:2,text:"PII data flows documented and minimised",crit:true},{id:3,text:"Rate limiting specified for all AI API calls",crit:false},{id:4,text:"Fallback behaviour defined if AI model unavailable",crit:false},{id:5,text:"No unchecked LLM output going directly to production",crit:true}]},
+  "3-3":{title:"Data Sensitivity Audit — Ghost Data Active",ghost:true,items:[{id:1,text:"Customer email addresses excluded from RAG index",crit:true},{id:2,text:"Financial report metadata stripped before vectorisation",crit:true},{id:3,text:"⚠ Employee performance data identified and quarantined",crit:false,isGhost:true},{id:4,text:"Third-party contracts reviewed for AI processing restrictions",crit:false},{id:5,text:"Data retention policy applied to vector store embeddings",crit:false}]},
+  "4-3":{title:"Human-in-the-Loop Checkpoint Design",items:[{id:1,text:"Agent cannot send external comms without human approval",crit:true},{id:2,text:"Spend limits set — agent cannot approve >₹10,000 without review",crit:true},{id:3,text:"All agent actions logged with timestamps",crit:true},{id:4,text:"Escalation path defined if agent confidence < 85%",crit:false},{id:5,text:"Human override mechanism tested and documented",crit:false}]},
+  "5-3":{title:"Mock Regulator Audit — ISO 42001 AIMS",ghost:true,items:[{id:1,text:"AIMS policy document board-approved within last 12 months",crit:true},{id:2,text:"All High Risk AI systems listed in conformity file",crit:true},{id:3,text:"⚠ Sensitive employee data in RAG system — GDPR Article 9 breach",crit:true,ghostFail:true},{id:4,text:"Bias testing completed for all customer-facing AI tools",crit:false},{id:5,text:"Incident response procedure documented and tested",crit:true}]},
+  "6-3":{title:"ROI Claims Audit-Readiness Validation",items:[{id:1,text:"Baseline metrics documented before AI deployment",crit:true},{id:2,text:"Time savings data source specified and auditable",crit:true},{id:3,text:"ROI methodology reviewed by Finance",crit:false},{id:4,text:"Productivity gains tracked at individual level",crit:false},{id:5,text:"Compounding assumptions explicitly stated",crit:true}]},
+}
+
+let complyChecked = {}
+
+function renderComply(mod, level, isDone, body) {
+  complyChecked = {}
+  const key = `${mod.id}-${level.id}`
+  const cfg = CCFG[key]||CCFG["1-3"]
+  const crits = cfg.items.filter(i=>i.crit)
+  const ghostFail = cfg.items.find(i=>i.ghostFail)
+  body.innerHTML = `<div class="page-xs">
+    <h2 class="h2" style="margin-bottom:12px">${cfg.title}</h2>
+    ${cfg.ghost?'<div class="ghost-warn"><span>👻</span><div><div style="font-weight:600">Ghost Data is active.</div><div style="margin-top:1px">Review ALL items carefully.</div></div></div>':''}
+    ${ghostFail&&STATE.ghostMissed?'<div class="ghost-fail">⚠ Unresolved sensitive data from Module 3 detected. You must acknowledge item 3.</div>':''}
+    <div id="check-items"></div>
+    <div style="background:#fff;border:1px solid #DDD8CE;border-radius:8px;padding:13px 16px;display:flex;align-items:center;gap:12px;margin-top:4px">
+      <div style="flex:1"><div class="pbar-wrap"><div class="pbar-fill" id="check-pbar" style="width:0%;background:#0D6B4A"></div></div></div>
+      <span class="muted" id="check-count" style="font-size:12px;white-space:nowrap">0/${crits.length} critical</span>
+      <button id="check-eval-btn" class="btn btn-navy" style="display:none;font-size:12px;padding:7px 14px" onclick="evalComply(${mod.id},${level.id})">Get AI Score →</button>
+    </div>
+    <div id="check-eval-result"></div>
+  </div>`
+  renderCheckItems(cfg, crits)
+}
+
+function renderCheckItems(cfg, crits) {
+  const el = document.getElementById("check-items")
+  el.innerHTML = cfg.items.map(item => {
+    const isG = item.isGhost||item.ghostFail
+    const isChk = !!complyChecked[item.id]
+    return `<div class="check-item" id="check-${item.id}" onclick="toggleCheck(${item.id})" style="${isChk?'border-color:#0D6B4A40':''}${isG?';border-color:#E8C86080':''}">
+      <div class="check-box${isChk?' checked':''}" id="checkb-${item.id}">${isChk?'✓':''}</div>
+      <div>
+        <div style="font-size:13px;color:${isChk?'#73718A':'#1C1830'};text-decoration:${isChk?'line-through':'none'};line-height:1.5">${item.text}</div>
+        <div style="display:flex;gap:5px;margin-top:3px">
+          ${item.crit?'<span style="font-size:10px;font-weight:700;color:#B02020;background:#FBE8E8;padding:1px 5px;border-radius:3px">CRITICAL</span>':''}
+          ${isG?'<span style="font-size:10px;font-weight:700;color:#8B6000;background:#FFF3D0;padding:1px 5px;border-radius:3px">👻 GHOST</span>':''}
+        </div>
+      </div>
+    </div>`
+  }).join("")
+}
+
+function toggleCheck(id) {
+  complyChecked[id] = !complyChecked[id]
+  const key = `${STATE.activeMod.id}-${STATE.activeLv.id}`
+  const cfg = CCFG[key]||CCFG["1-3"]
+  const crits = cfg.items.filter(i=>i.crit)
+  const critDone = crits.filter(i=>complyChecked[i.id]).length
+  renderCheckItems(cfg, crits)
+  document.getElementById("check-pbar").style.width = (critDone/crits.length*100)+"%"
+  document.getElementById("check-count").textContent = critDone+"/"+crits.length+" critical"
+  if(critDone===crits.length) document.getElementById("check-eval-btn").style.display = "block"
+}
+
+async function evalComply(modId, levelId) {
+  const btn = document.getElementById("check-eval-btn")
+  btn.textContent = "Evaluating…"; btn.disabled = true
+  const key = `${modId}-${levelId}`, cfg = CCFG[key]||CCFG["1-3"]
+  const gItem = cfg.items.find(i=>i.isGhost||i.ghostFail)
+  const ghostCaught = gItem ? !!complyChecked[gItem.id] : true
+  try {
+    const d = await post("/api/evaluate", {module_id:modId,level_id:levelId,level_type:"comply",user_input:{checked:Object.keys(complyChecked).filter(k=>complyChecked[k]),ghost_caught:ghostCaught},ghost_missed:STATE.ghostMissed})
+    renderEvalResult(d, "check-eval-result")
+    setCanComplete(d.score, ghostCaught, {})
+  } catch(e) { setCanComplete(70, ghostCaught, {}) }
+  btn.style.display = "none"
+}
+
+// ── DEFEND ────────────────────────────────────────────────────────────────────
+const DEFCFG = {
+  "1-4":{title:"Board Defence",ctx:"Presenting your AI org redesign to the board. They are concerned about headcount and legal exposure.",qs:[{q:"You're removing 3 approval layers. What is your legal basis?",h:"Employment law, consultation requirements, timeline"},{q:"The board sees 40% productivity claims. Why believe yours?",h:"Methodology, baseline data, comparable case studies"},{q:"What if the model provider raises prices by 300%?",h:"Model agnosticism, build vs buy, cost structure"}]},
+  "2-4":{title:"CTO Debate — Speed vs Technical Debt",ctx:"Your CTO believes moving fast will create unmaintainable code.",qs:[{q:"How do you prevent AI-generated code from introducing security vulnerabilities?",h:"Automated scanning, code review, human oversight"},{q:"Your Spec Kit assumes developers write precise specs. What if they can't?",h:"Training, spec quality metrics, escalation"},{q:"Rollback plan if AI code causes a production outage?",h:"Deployment strategy, monitoring, circuit breakers"}]},
+  "3-4":{title:"Risk Committee — Data Architecture",ctx:"Risk Committee is concerned about data leakage into the LLM.",qs:[{q:"What prevents the LLM from outputting sensitive retrieved data?",h:"Output filtering, metadata controls, permission layers"},{q:"Could a competitor extract proprietary knowledge via queries?",h:"Context isolation, query monitoring, rate limiting"},{q:"How do you handle data that was compliant when indexed but no longer is?",h:"Data lifecycle management, re-indexing, deletion propagation"}]},
+  "4-4":{title:"Risk Committee — Agent Autonomy",ctx:"You want to deploy an agent that sends emails and approves small budgets.",qs:[{q:"If an agent sends a misleading client email, who is legally liable?",h:"EU AI Act liability, deployer vs provider obligations"},{q:"How do you stop a prompt injection attack redirecting the agent?",h:"Input validation, intent monitoring, DPI proxy"},{q:"When does agent autonomy become regulated under EU AI Act?",h:"High vs limited risk classification, human-in-the-loop"}]},
+  "5-4":{title:"⚠ Data Breach Crisis",ctx:"ALERT: An AI agent exfiltrated customer PII. 30 minutes to contain it.",qs:[{q:"2,400 customer records sent to external endpoint. Immediate action?",h:"Kill switch, audit log review, endpoint blocking"},{q:"GDPR requires 72-hour notification. Who and what?",h:"ICO requirements, affected users, DPO role"},{q:"Press asking if your AI went rogue. Public statement?",h:"Transparency, safeguards, corrective action"}]},
+  "6-4":{title:"CFO Presentation — ₹1Cr AI Budget",ctx:"Requesting ₹1 crore for AI infrastructure. CFO wants a rigorous business case.",qs:[{q:"Your slide says 30% efficiency gain. Show me the calculation.",h:"DX Core 4, baseline metrics, time savings, rupee conversion"},{q:"Why pay ₹15 lakh when free tiers exist?",h:"Security, compliance, SLA, data sovereignty"},{q:"Year 2 ROI if model costs increase 40% and you scale to 3 teams?",h:"Compounding efficiency, scale effects, sensitivity analysis"}]},
+}
+
+function renderDefend(mod, level, isDone, body) {
+  const key = `${mod.id}-${level.id}`, cfg = DEFCFG[key]||DEFCFG["1-4"]
+  body.innerHTML = `<div class="page-sm">
+    <div class="defend-ctx">
+      <div style="font-size:10px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:rgba(255,255,255,0.5);margin-bottom:5px">Simulation</div>
+      <div style="font-family:Georgia,serif;font-size:17px;margin-bottom:7px">${cfg.title}</div>
+      <p style="font-size:13px;color:rgba(255,255,255,0.72);line-height:1.6">${cfg.ctx}</p>
+    </div>
+    ${cfg.qs.map((q,i)=>`<div class="defend-q">
+      <div style="font-size:10px;font-weight:700;color:#73718A;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:7px">Q${i+1}</div>
+      <div style="font-size:14px;font-weight:600;line-height:1.5;margin-bottom:12px">"${q.q}"</div>
+      <textarea id="defend-ans-${i}" rows="3" class="field" style="margin:0" placeholder="Type your response…" onchange="checkDefendAnswers()" oninput="checkDefendAnswers()"></textarea>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-top:7px">
+        <button onclick="toggleHint(${i})" style="font-size:12px;color:#B87200;background:none;border:none;cursor:pointer;padding:0;font-weight:500;font-family:inherit">▼ Show hint</button>
+        <span id="defend-recorded-${i}" style="font-size:11px;color:#0D6B4A;font-weight:500;display:none">✓ Recorded</span>
+      </div>
+      <div id="hint-${i}" style="display:none;background:#FFFAEE;border:1px solid #E8C860;border-radius:5px;padding:9px 11px;margin-top:8px;font-size:12px;color:#7A5800;line-height:1.6">💡 ${q.h}</div>
+    </div>`).join('')}
+    <div style="padding:12px 16px;background:#fff;border:1px solid #DDD8CE;border-radius:8px;display:flex;justify-content:space-between;align-items:center">
+      <span class="muted" id="defend-count">0/${cfg.qs.length} answered</span>
+      <button id="defend-eval-btn" class="btn btn-navy" style="display:none;font-size:12px;padding:7px 14px" onclick="evalDefend(${mod.id},${level.id})">Get AI Score →</button>
+    </div>
+    <div id="defend-eval-result"></div>
+  </div>`
+}
+
+function toggleHint(i) {
+  const el = document.getElementById("hint-"+i)
+  el.style.display = el.style.display==="none"?"block":"none"
+}
+
+function checkDefendAnswers() {
+  const key = `${STATE.activeMod.id}-${STATE.activeLv.id}`, cfg = DEFCFG[key]||DEFCFG["1-4"]
+  let count = 0
+  cfg.qs.forEach((_,i)=>{
+    const val = (document.getElementById("defend-ans-"+i)||{}).value||""
+    const rec = document.getElementById("defend-recorded-"+i)
+    if(val.trim().length>20){count++;if(rec)rec.style.display="block"}else{if(rec)rec.style.display="none"}
+  })
+  document.getElementById("defend-count").textContent = count+"/"+cfg.qs.length+" answered"
+  if(count>=2) document.getElementById("defend-eval-btn").style.display = "block"
+}
+
+async function evalDefend(modId, levelId) {
+  const btn = document.getElementById("defend-eval-btn")
+  btn.textContent = "Evaluating…"; btn.disabled = true
+  const key = `${modId}-${levelId}`, cfg = DEFCFG[key]||DEFCFG["1-4"]
+  const answers = {}
+  cfg.qs.forEach((_,i)=>{ answers[i] = (document.getElementById("defend-ans-"+i)||{}).value||"" })
+  try {
+    const d = await post("/api/evaluate", {module_id:modId,level_id:levelId,level_type:"defend",user_input:{answers,questions:cfg.qs.map(q=>q.q)},ghost_missed:STATE.ghostMissed})
+    renderEvalResult(d, "defend-eval-result")
+    setCanComplete(d.score, true, answers)
+  } catch(e) { setCanComplete(70, true, answers) }
+  btn.style.display = "none"
+}
+
+// ── FUTURE ────────────────────────────────────────────────────────────────────
+const FCFG = {
+  1:{title:"12-Month AI Transformation Roadmap",phases:[{l:"Month 1–3: Foundation",c:"#1B3068"},{l:"Month 4–6: Automation",c:"#0D6B4A"},{l:"Month 7–9: Augmentation",c:"#8B6000"},{l:"Month 10–12: Scale",c:"#5B2D8E"}]},
+  2:{title:"AI-Native Dev Workflow — 12 Months",phases:[{l:"Month 1–3: Tooling Setup",c:"#1B3068"},{l:"Month 4–6: Spec-Driven Dev",c:"#0D6B4A"},{l:"Month 7–9: Agentic Coding",c:"#8B6000"},{l:"Month 10–12: Full AI-SDLC",c:"#5B2D8E"}]},
+  3:{title:"Data Moat Growth Roadmap",phases:[{l:"Month 1–3: Data Audit",c:"#1B3068"},{l:"Month 4–6: RAG MVP",c:"#0D6B4A"},{l:"Month 7–9: Knowledge Graph",c:"#8B6000"},{l:"Month 10–12: 10× Scale",c:"#5B2D8E"}]},
+  4:{title:"Centaur Team Deployment",phases:[{l:"Month 1–3: Agent Prototypes",c:"#1B3068"},{l:"Month 4–6: Supervised Agents",c:"#0D6B4A"},{l:"Month 7–9: Semi-Autonomous",c:"#8B6000"},{l:"Month 10–12: Full Centaur Team",c:"#5B2D8E"}]},
+  5:{title:"Governance Evolution — 12 Months",phases:[{l:"Month 1–3: AIMS Foundation",c:"#1B3068"},{l:"Month 4–6: Conformity File",c:"#0D6B4A"},{l:"Month 7–9: ISO 42001 Audit",c:"#8B6000"},{l:"Month 10–12: Certification",c:"#5B2D8E"}]},
+  6:{title:"3-Year ROI Model",phases:[{l:"Year 1: Baseline — ₹1Cr",c:"#1B3068"},{l:"Year 2: Compounding 2×",c:"#0D6B4A"},{l:"Year 3: Scaled 4×",c:"#8B6000"},{l:"Target: 10.3× ROI",c:"#5B2D8E"}]},
+}
+
+function renderFuture(mod, level, isDone, body) {
+  const cfg = FCFG[mod.id]||FCFG[1]
+  body.innerHTML = `<div class="page-sm">
+    <h2 class="h2" style="margin-bottom:5px">${cfg.title}</h2>
+    <p class="muted" style="margin-bottom:22px">Define specific initiatives — actual tools, metrics, and owners.</p>
+    ${cfg.phases.map((p,i)=>`<div style="background:#fff;border:1px solid #DDD8CE;border-left:4px solid ${p.c};border-radius:8px;padding:18px;margin-bottom:12px">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:9px">
+        <span style="font-size:13px;font-weight:700;color:${p.c}">${p.l}</span>
+        <div style="display:flex;gap:3px;align-items:center">
+          ${[1,2,3,4,5].map(n=>`<button onclick="setConf(${i},${n})" id="conf-${i}-${n}" style="width:19px;height:19px;border-radius:50%;border:none;cursor:pointer;font-size:9px;font-weight:700;background:#EEEAE3;color:#73718A;font-family:inherit">${n}</button>`).join('')}
+          <span class="muted" style="margin-left:3px;font-size:11px">confidence</span>
+        </div>
+      </div>
+      <textarea id="future-text-${i}" rows="3" style="width:100%;padding:9px 11px;border:1px solid #DDD8CE;border-radius:6px;font-size:13px;line-height:1.6;font-family:inherit;color:#1C1830;box-sizing:border-box;resize:vertical;outline:none" placeholder="Specific initiatives, tools, metrics for ${p.l}…" oninput="checkFutureFill()"></textarea>
+    </div>`).join('')}
+    <div style="padding:12px 16px;background:#fff;border:1px solid #DDD8CE;border-radius:8px;display:flex;justify-content:space-between;align-items:center">
+      <span class="muted" id="future-count">0/${cfg.phases.length} phases defined</span>
+      <button id="future-eval-btn" class="btn btn-navy" style="display:none;font-size:12px;padding:7px 14px" onclick="evalFuture(${mod.id},${level.id})">Get AI Score →</button>
+    </div>
+    <div id="future-eval-result"></div>
+  </div>`
+}
+
+let futureConf = {}
+function setConf(i, n) {
+  futureConf[i] = n
+  const cfg = FCFG[STATE.activeMod.id]||FCFG[1]
+  cfg.phases.forEach((_,pi)=>{
+    [1,2,3,4,5].forEach(v=>{
+      const btn = document.getElementById(`conf-${pi}-${v}`)
+      if(btn) { btn.style.background = (futureConf[pi]||0)>=v ? cfg.phases[pi].c : "#EEEAE3"; btn.style.color = (futureConf[pi]||0)>=v ? "#fff" : "#73718A" }
+    })
+  })
+}
+
+function checkFutureFill() {
+  const cfg = FCFG[STATE.activeMod.id]||FCFG[1]
+  let filled = 0
+  cfg.phases.forEach((_,i)=>{ if((document.getElementById("future-text-"+i)||{}).value?.trim().length>5) filled++ })
+  document.getElementById("future-count").textContent = filled+"/"+cfg.phases.length+" defined"
+  if(filled>=3) document.getElementById("future-eval-btn").style.display = "block"
+}
+
+async function evalFuture(modId, levelId) {
+  const btn = document.getElementById("future-eval-btn")
+  btn.textContent = "Evaluating…"; btn.disabled = true
+  const cfg = FCFG[modId]||FCFG[1]
+  const phases = cfg.phases.map((p,i)=>({phase:p.l,text:(document.getElementById("future-text-"+i)||{}).value||"",conf:futureConf[i]||0}))
+  try {
+    const d = await post("/api/evaluate", {module_id:modId,level_id:levelId,level_type:"future",user_input:{phases},ghost_missed:STATE.ghostMissed})
+    renderEvalResult(d, "future-eval-result")
+    setCanComplete(d.score, true, {phases})
+  } catch(e) { setCanComplete(70, true, {phases}) }
+  btn.style.display = "none"
+}
+
+// ── HELPERS ───────────────────────────────────────────────────────────────────
+function renderEvalResult(d, containerId) {
+  const el = document.getElementById(containerId)
+  if(!el) return
+  el.innerHTML = `<div class="eval-box ${d.passed?'pass':'fail'}">
+    ${scoreBadge(d.score)}
+    <p style="font-size:13px;color:#1C1830;line-height:1.6;flex:1;margin-left:10px">${d.feedback||''}</p>
+  </div>`
+}
+
+function badge(label, color, bg) {
+  return `<span class="badge" style="background:${bg};color:${color}">${label}</span>`
+}
+
+function scoreBadge(score) {
+  if(!score) return ""
+  const c = score>=80?"#0D6B4A":score>=60?"#8B6000":"#B02020"
+  const bg = score>=80?"#E8F5F0":score>=60?"#FFF3D0":"#FBE8E8"
+  return `<span class="badge" style="background:${bg};color:${c}">Score: ${score}/100</span>`
+}
+
+function getAvgScore(modId) {
+  const ms = STATE.scores[modId]||{}
+  const vals = Object.values(ms).filter(Boolean)
+  return vals.length ? Math.round(vals.reduce((a,b)=>a+b,0)/vals.length) : null
+}
+
+function ring(v, max, sz, str, color) {
+  const r=(sz-str*2)/2, ci=2*Math.PI*r, arc=(v/max)*ci||0
+  return `<svg width="${sz}" height="${sz}" style="flex-shrink:0">
+    <circle cx="${sz/2}" cy="${sz/2}" r="${r}" fill="none" stroke="#EEEAE3" stroke-width="${str}"/>
+    <circle cx="${sz/2}" cy="${sz/2}" r="${r}" fill="none" stroke="${color}" stroke-width="${str}" stroke-dasharray="${arc} ${ci}" stroke-linecap="round" transform="rotate(-90 ${sz/2} ${sz/2})"/>
+    <text x="${sz/2}" y="${sz/2+1}" text-anchor="middle" dominant-baseline="middle" style="font-size:10px;font-weight:700;fill:${color}">${v}/${max}</text>
+  </svg>`
+}
+</script>
+</body>
+</html>
