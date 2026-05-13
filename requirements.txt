@@ -1,6 +1,7 @@
-fastapi==0.111.0
-uvicorn==0.29.0
-supabase==2.4.0
-google-genai==1.16.0
-pydantic==2.7.0
-python-multipart==0.0.9
+fastapi
+uvicorn
+supabase
+google-genai
+pydantic
+python-multipart
+reportlab
