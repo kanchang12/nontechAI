@@ -6,7 +6,7 @@
 <title>AI with AI — CEAL Certification Platform</title>
 <style>
   /* ── CHANGE THIS TO YOUR KOYEB URL ── */
-  :root { --api: "https://nontechai-451954006366.europe-west1.run.app"; }
+  :root { --api: "https://your-app.koyeb.app"; }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { font-family: 'Segoe UI', -apple-system, system-ui, sans-serif; background: #F5F4EF; color: #1C1830; }
@@ -155,33 +155,170 @@
 
 <div id="screen-login" class="screen active">
   <div class="nav"><div class="logo">AI <span>with</span> AI</div><span class="muted">Enterprise AI Certification · CEAL</span></div>
-  <div style="max-width:1100px;margin:0 auto;padding:40px 24px;display:flex;gap:56px;flex-wrap:wrap">
-    <div style="flex:1 1 260px">
-      <div style="display:inline-block;background:#1B3068;border-radius:8px;padding:8px 16px;margin-bottom:20px"><span class="logo" style="font-size:22px;color:#fff">AI <span>with</span> AI</span></div>
-      <h1 class="h1" style="margin-bottom:12px">Become a Certified<br>Enterprise AI Lead</h1>
-      <p class="sub" style="margin-bottom:24px">6 modules · 30 simulation levels · Agentic AI consultant.<br>Built for senior developers facing the AI transition.</p>
-      <div class="flex gap-24" style="margin-bottom:24px">
-        <div><div style="font-family:Georgia,serif;font-size:20px;color:#1B3068">30</div><div class="muted">Levels</div></div>
-        <div><div style="font-family:Georgia,serif;font-size:20px;color:#1B3068">AI</div><div class="muted">Agent Guided</div></div>
-        <div><div style="font-family:Georgia,serif;font-size:20px;color:#1B3068">CEAL</div><div class="muted">Certificate</div></div>
+
+  <!-- Hero -->
+  <div style="background:#1B3068;padding:56px 32px 48px">
+    <div style="max-width:1100px;margin:0 auto;display:flex;gap:56px;flex-wrap:wrap;align-items:flex-start">
+      <div style="flex:1 1 380px">
+        <div style="font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#E8A020;margin-bottom:14px">For Senior Developers with 10+ Years Experience</div>
+        <h1 style="font-family:Georgia,serif;font-size:36px;font-weight:400;color:#fff;line-height:1.2;margin-bottom:16px">10 years of coding<br>won't save your career.<br><span style="color:#E8A020">AI governance will.</span></h1>
+        <p style="font-size:15px;color:rgba(255,255,255,0.72);line-height:1.8;margin-bottom:24px">82% of developers use AI weekly. Only 29% can prove its ROI to their board. The gap is not technical skill — it is the ability to govern, architect, and defend AI decisions at enterprise level. That is what CEAL teaches.</p>
+        <div style="display:flex;gap:32px;flex-wrap:wrap;margin-bottom:28px">
+          <div><div style="font-family:Georgia,serif;font-size:28px;color:#E8A020">6</div><div style="font-size:12px;color:rgba(255,255,255,0.55)">Modules</div></div>
+          <div><div style="font-family:Georgia,serif;font-size:28px;color:#E8A020">30</div><div style="font-size:12px;color:rgba(255,255,255,0.55)">Simulation Levels</div></div>
+          <div><div style="font-family:Georgia,serif;font-size:28px;color:#E8A020">AI</div><div style="font-size:12px;color:rgba(255,255,255,0.55)">Agent Consultant</div></div>
+          <div><div style="font-family:Georgia,serif;font-size:28px;color:#E8A020">PDF</div><div style="font-size:12px;color:rgba(255,255,255,0.55)">Certificate</div></div>
+        </div>
+        <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">
+          <div style="background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);border-radius:6px;padding:8px 14px;font-size:12px;color:rgba(255,255,255,0.6)">✓ Gemini AI powered</div>
+          <div style="background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);border-radius:6px;padding:8px 14px;font-size:12px;color:rgba(255,255,255,0.6)">✓ EU AI Act + ISO 42001</div>
+          <div style="background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);border-radius:6px;padding:8px 14px;font-size:12px;color:rgba(255,255,255,0.6)">✓ LOVEUAD LTD certified</div>
+        </div>
       </div>
-      <div id="login-module-list"></div>
+      <div style="flex:0 0 360px">
+        <div style="background:#fff;border-radius:12px;padding:28px" id="login-step1">
+          <h2 style="font-family:Georgia,serif;font-size:20px;font-weight:400;color:#1C1830;margin-bottom:6px">Start your certification</h2>
+          <p style="font-size:13px;color:#73718A;margin-bottom:20px">Free to access during beta. Certificate issued by LOVEUAD LTD.</p>
+          <div class="field"><label>Full name</label><input id="reg-name" placeholder="Your name"></div>
+          <div class="field"><label>Email</label><input id="reg-email" type="email" placeholder="you@company.com"></div>
+          <button class="btn btn-navy btn-full" onclick="loginStep2()">Continue →</button>
+        </div>
+        <div style="background:#fff;border-radius:12px;padding:28px;display:none" id="login-step2">
+          <h2 style="font-family:Georgia,serif;font-size:20px;font-weight:400;color:#1C1830;margin-bottom:16px">Choose your programme</h2>
+          <div id="tier-options"></div>
+          <div id="reg-err" class="err"></div>
+          <button class="btn btn-navy btn-full" id="reg-btn" onclick="doRegister()">Start Programme →</button>
+          <p class="muted" style="text-align:center;margin-top:12px">Certificate issued by LOVEUAD LTD · Company No. 16838046</p>
+        </div>
+      </div>
     </div>
-    <div style="flex:1 1 340px;max-width:420px">
-      <div id="login-step1" class="card">
-        <h2 class="h2" style="margin-bottom:20px">Create your account</h2>
-        <div class="field"><label>Full name</label><input id="reg-name" placeholder="Your name"></div>
-        <div class="field"><label>Email</label><input id="reg-email" type="email" placeholder="you@company.com"></div>
-        <button class="btn btn-navy btn-full" onclick="loginStep2()">Continue →</button>
+  </div>
+
+  <!-- Problem statement -->
+  <div style="background:#fff;padding:48px 32px;border-bottom:1px solid #DDD8CE">
+    <div style="max-width:1100px;margin:0 auto">
+      <div style="text-align:center;margin-bottom:36px">
+        <div style="font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#B02020;margin-bottom:10px">The Problem</div>
+        <h2 style="font-family:Georgia,serif;font-size:26px;font-weight:400;color:#1C1830;margin-bottom:12px">You are stuck in "Pilot Purgatory"</h2>
+        <p style="font-size:15px;color:#4A4862;max-width:620px;margin:0 auto;line-height:1.8">Your organisation has deployed AI copilots. Productivity is up. But the gains are not hitting the P&L. The board is impatient. Your CTO wants ROI numbers. Your risk team wants compliance evidence. Nobody trained you for this.</p>
       </div>
-      <div id="login-step2" style="display:none">
-        <h2 class="h2" style="margin-bottom:16px">Choose your programme</h2>
-        <div id="tier-options"></div>
-        <div id="reg-err" class="err"></div>
-        <button class="btn btn-navy btn-full" id="reg-btn" onclick="doRegister()">Start Programme →</button>
-        <p class="muted" style="text-align:center;margin-top:12px">Certificate issued by LOVEUAD LTD · LinkedIn ready</p>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:20px">
+        <div style="background:#FBE8E8;border:1px solid #E8C0C0;border-radius:10px;padding:20px">
+          <div style="font-size:28px;font-weight:700;color:#B02020;font-family:Georgia,serif;margin-bottom:6px">82%</div>
+          <div style="font-size:13px;color:#4A4862;line-height:1.6">of leaders use GenAI weekly but cannot prove its ROI to the board</div>
+        </div>
+        <div style="background:#FBE8E8;border:1px solid #E8C0C0;border-radius:10px;padding:20px">
+          <div style="font-size:28px;font-weight:700;color:#B02020;font-family:Georgia,serif;margin-bottom:6px">60%</div>
+          <div style="font-size:13px;color:#4A4862;line-height:1.6">of CEOs believe boards are rushing AI transformation without understanding it</div>
+        </div>
+        <div style="background:#FBE8E8;border:1px solid #E8C0C0;border-radius:10px;padding:20px">
+          <div style="font-size:28px;font-weight:700;color:#B02020;font-family:Georgia,serif;margin-bottom:6px">35%</div>
+          <div style="font-size:13px;color:#4A4862;line-height:1.6">of boards have unrealistic expectations about AI replacing human headcount</div>
+        </div>
+        <div style="background:#FBE8E8;border:1px solid #E8C0C0;border-radius:10px;padding:20px">
+          <div style="font-size:28px;font-weight:700;color:#B02020;font-family:Georgia,serif;margin-bottom:6px">0%</div>
+          <div style="font-size:13px;color:#4A4862;line-height:1.6">of traditional developer training covers EU AI Act, ISO 42001, or agentic governance</div>
+        </div>
       </div>
     </div>
+  </div>
+
+  <!-- 6 Modules -->
+  <div style="background:#F5F4EF;padding:48px 32px;border-bottom:1px solid #DDD8CE">
+    <div style="max-width:1100px;margin:0 auto">
+      <div style="text-align:center;margin-bottom:36px">
+        <div style="font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#1B3068;margin-bottom:10px">The Curriculum</div>
+        <h2 style="font-family:Georgia,serif;font-size:26px;font-weight:400;color:#1C1830;margin-bottom:12px">6 Modules. 30 Levels. One Certificate.</h2>
+        <p style="font-size:15px;color:#4A4862;max-width:560px;margin:0 auto;line-height:1.8">Each module has 5 levels: Explore with the AI consultant, Design with drag and drop, Comply with audit checklists, Defend in boardroom simulations, and Future Proof with roadmaps.</p>
+      </div>
+      <div id="login-module-list" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:16px"></div>
+    </div>
+  </div>
+
+  <!-- How it works -->
+  <div style="background:#fff;padding:48px 32px;border-bottom:1px solid #DDD8CE">
+    <div style="max-width:1100px;margin:0 auto">
+      <div style="text-align:center;margin-bottom:36px">
+        <div style="font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#1B3068;margin-bottom:10px">How It Works</div>
+        <h2 style="font-family:Georgia,serif;font-size:26px;font-weight:400;color:#1C1830">This is not a course. It is a war game.</h2>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:20px">
+        <div style="border-top:3px solid #1B3068;padding:18px 0 0">
+          <div style="font-size:11px;font-weight:700;color:#1B3068;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:8px">Level 1 — Explore</div>
+          <div style="font-size:13px;color:#4A4862;line-height:1.7">Live session with your AI consultant powered by Gemini. It asks sharp questions, scores every answer, and calls out vague responses. Minimum 4 exchanges required to unlock completion.</div>
+        </div>
+        <div style="border-top:3px solid #0D6B4A;padding:18px 0 0">
+          <div style="font-size:11px;font-weight:700;color:#0D6B4A;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:8px">Level 2 — Design</div>
+          <div style="font-size:13px;color:#4A4862;line-height:1.7">Drag and drop interface. Build org structures, RAG pipelines, agent workflows, conformity files. The AI evaluates your placements and scores your architecture thinking.</div>
+        </div>
+        <div style="border-top:3px solid #8B6000;padding:18px 0 0">
+          <div style="font-size:11px;font-weight:700;color:#8B6000;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:8px">Level 3 — Comply</div>
+          <div style="font-size:13px;color:#4A4862;line-height:1.7">Compliance audit checklist. In Module 3, a hidden Ghost Data node is introduced. If you miss it, the violation cascades into Module 5 and your mock regulator audit automatically fails.</div>
+        </div>
+        <div style="border-top:3px solid #B02020;padding:18px 0 0">
+          <div style="font-size:11px;font-weight:700;color:#B02020;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:8px">Level 4 — Defend</div>
+          <div style="font-size:13px;color:#4A4862;line-height:1.7">Boardroom simulation. You face a CTO, CFO, board member, or regulator. They challenge every claim. The AI scores the quality and depth of your defence. No hints unless you ask.</div>
+        </div>
+        <div style="border-top:3px solid #5B2D8E;padding:18px 0 0">
+          <div style="font-size:11px;font-weight:700;color:#5B2D8E;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:8px">Level 5 — Future Proof</div>
+          <div style="font-size:13px;color:#4A4862;line-height:1.7">Build a 12-month roadmap with confidence ratings per phase. The AI stress-tests every assumption. You leave with a strategic plan you can actually present to leadership.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Pricing -->
+  <div style="background:#F5F4EF;padding:48px 32px;border-bottom:1px solid #DDD8CE">
+    <div style="max-width:900px;margin:0 auto">
+      <div style="text-align:center;margin-bottom:36px">
+        <div style="font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#1B3068;margin-bottom:10px">Pricing</div>
+        <h2 style="font-family:Georgia,serif;font-size:26px;font-weight:400;color:#1C1830;margin-bottom:12px">Choose your level of commitment</h2>
+        <p style="font-size:14px;color:#73718A">All tiers include a PDF certificate issued by LOVEUAD LTD.</p>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px">
+        <div style="background:#fff;border:1px solid #DDD8CE;border-radius:12px;padding:28px;border-top:4px solid #1B3068">
+          <div style="font-size:11px;font-weight:700;color:#1B3068;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:10px">Foundation</div>
+          <div style="font-family:Georgia,serif;font-size:32px;color:#1C1830;margin-bottom:6px">₹8,000</div>
+          <div style="font-size:13px;color:#73718A;margin-bottom:16px">Modules 1–3 · 15 levels</div>
+          <div style="font-size:13px;color:#4A4862;line-height:1.8">
+            ✓ Work Redesign & Strategy<br>
+            ✓ AI-Led SDLC<br>
+            ✓ RAG & Data Moat<br>
+            ✓ CEAL Foundation certificate
+          </div>
+        </div>
+        <div style="background:#1B3068;border-radius:12px;padding:28px;border-top:4px solid #E8A020;position:relative">
+          <div style="position:absolute;top:-1px;right:20px;background:#E8A020;color:#1B3068;font-size:10px;font-weight:700;padding:3px 10px;border-radius:0 0 6px 6px;letter-spacing:0.06em">MOST POPULAR</div>
+          <div style="font-size:11px;font-weight:700;color:#E8A020;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:10px">Professional</div>
+          <div style="font-family:Georgia,serif;font-size:32px;color:#fff;margin-bottom:6px">₹10,000</div>
+          <div style="font-size:13px;color:rgba(255,255,255,0.55);margin-bottom:16px">Modules 1–5 · 25 levels</div>
+          <div style="font-size:13px;color:rgba(255,255,255,0.75);line-height:1.8">
+            ✓ Everything in Foundation<br>
+            ✓ Agentic Workflows<br>
+            ✓ Governance OS · EU AI Act<br>
+            ✓ CEAL Professional certificate
+          </div>
+        </div>
+        <div style="background:#fff;border:2px solid #5B2D8E;border-radius:12px;padding:28px;border-top:4px solid #5B2D8E">
+          <div style="font-size:11px;font-weight:700;color:#5B2D8E;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:10px">Full Certification</div>
+          <div style="font-family:Georgia,serif;font-size:32px;color:#1C1830;margin-bottom:6px">₹15,000</div>
+          <div style="font-size:13px;color:#73718A;margin-bottom:16px">All 6 Modules · 30 levels</div>
+          <div style="font-size:13px;color:#4A4862;line-height:1.8">
+            ✓ Everything in Professional<br>
+            ✓ ROI & DX Core 4<br>
+            ✓ CFO Presentation simulation<br>
+            ✓ Full CEAL certificate · LinkedIn ready
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer CTA -->
+  <div style="background:#1B3068;padding:40px 32px;text-align:center">
+    <h2 style="font-family:Georgia,serif;font-size:22px;font-weight:400;color:#fff;margin-bottom:10px">Ready to become an Enterprise AI Lead?</h2>
+    <p style="font-size:14px;color:rgba(255,255,255,0.6);margin-bottom:20px">Register above. Free during beta.</p>
+    <p style="font-size:12px;color:rgba(255,255,255,0.4)">LOVEUAD LTD · Company No. 16838046 · aiwithai.online</p>
   </div>
 </div>
 
@@ -195,18 +332,106 @@
       <button class="btn-ghost" onclick="logout()">Sign out</button>
     </div>
   </div>
-  <div class="page">
-    <div class="flex-between wrap gap-16" style="margin-bottom:28px">
-      <div>
-        <h1 class="h2" id="dash-welcome" style="margin-bottom:3px"></h1>
-        <p class="muted" id="dash-progress-text"></p>
+  <!-- Hero band -->
+  <div style="background:#1B3068;color:#fff;padding:40px 32px 36px">
+    <div style="max-width:1100px;margin:0 auto">
+      <div style="display:flex;gap:32px;align-items:flex-start;flex-wrap:wrap;justify-content:space-between">
+        <div style="flex:1 1 340px">
+          <h1 id="dash-welcome" style="font-family:Georgia,serif;font-size:26px;font-weight:400;margin-bottom:8px;color:#fff"></h1>
+          <p style="font-size:15px;color:rgba(255,255,255,0.72);line-height:1.7;margin-bottom:20px">You are training to become a <strong style="color:#E8A020">Certified Enterprise AI Lead</strong> — the role that bridges technical architecture and business value. Every level you complete is a decision your AI consultant has evaluated and scored.</p>
+          <div style="display:flex;gap:28px;flex-wrap:wrap">
+            <div><div style="font-family:Georgia,serif;font-size:22px;color:#E8A020" id="dash-done-num">0</div><div style="font-size:12px;color:rgba(255,255,255,0.55)">Levels Done</div></div>
+            <div><div style="font-family:Georgia,serif;font-size:22px;color:#E8A020" id="dash-total-num">0</div><div style="font-size:12px;color:rgba(255,255,255,0.55)">Total Levels</div></div>
+            <div><div style="font-family:Georgia,serif;font-size:22px;color:#E8A020" id="dash-avg-num">—</div><div style="font-size:12px;color:rgba(255,255,255,0.55)">Avg Score</div></div>
+            <div><div style="font-family:Georgia,serif;font-size:22px;color:#E8A020" id="dash-pct" style="font-size:22px">0%</div><div style="font-size:12px;color:rgba(255,255,255,0.55)">Complete</div></div>
+          </div>
+        </div>
+        <div style="flex:0 0 260px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);border-radius:10px;padding:20px">
+          <div style="font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:rgba(255,255,255,0.45);margin-bottom:12px">Your Programme</div>
+          <div id="dash-tier-badge" style="margin-bottom:12px"></div>
+          <div style="font-size:13px;color:rgba(255,255,255,0.65);line-height:1.6;margin-bottom:14px" id="dash-progress-text"></div>
+          <div style="height:5px;background:rgba(255,255,255,0.12);border-radius:5px;overflow:hidden;margin-bottom:14px"><div class="pbar-fill" id="dash-pbar" style="width:0%;background:#E8A020;height:100%"></div></div>
+          <div style="font-size:12px;color:rgba(255,255,255,0.5)">Certificate issued by LOVEUAD LTD<br>Company No. 16838046</div>
+        </div>
       </div>
-      <div style="min-width:200px;flex:1;max-width:220px">
-        <div class="flex-between" style="margin-bottom:4px"><span class="muted" style="font-size:11px">Progress</span><span id="dash-pct" style="font-size:11px;font-weight:700"></span></div>
-        <div class="pbar-wrap"><div class="pbar-fill" id="dash-pbar" style="width:0%"></div></div>
+    </div>
+  </div>
+
+  <!-- What you will learn strip -->
+  <div style="background:#fff;border-bottom:1px solid #DDD8CE;padding:20px 32px">
+    <div style="max-width:1100px;margin:0 auto">
+      <div style="display:flex;gap:32px;flex-wrap:wrap;align-items:flex-start">
+        <div style="flex:1 1 200px;display:flex;gap:12px;align-items:flex-start">
+          <div style="font-size:22px;flex-shrink:0">🎯</div>
+          <div><div style="font-size:13px;font-weight:600;color:#1C1830;margin-bottom:2px">Agentic AI Consultant</div><div style="font-size:12px;color:#73718A;line-height:1.5">Every answer scored. Every decision questioned. No vague feedback.</div></div>
+        </div>
+        <div style="flex:1 1 200px;display:flex;gap:12px;align-items:flex-start">
+          <div style="font-size:22px;flex-shrink:0">⚡</div>
+          <div><div style="font-size:13px;font-weight:600;color:#1C1830;margin-bottom:2px">Decision-Consequence Mapping</div><div style="font-size:12px;color:#73718A;line-height:1.5">Choices you make in Module 3 cascade into Module 5. Real stakes.</div></div>
+        </div>
+        <div style="flex:1 1 200px;display:flex;gap:12px;align-items:flex-start">
+          <div style="font-size:22px;flex-shrink:0">🏛</div>
+          <div><div style="font-size:13px;font-weight:600;color:#1C1830;margin-bottom:2px">EU AI Act + ISO 42001</div><div style="font-size:12px;color:#73718A;line-height:1.5">Real compliance frameworks. Not theory. A mock regulator will audit you.</div></div>
+        </div>
+        <div style="flex:1 1 200px;display:flex;gap:12px;align-items:flex-start">
+          <div style="font-size:22px;flex-shrink:0">📄</div>
+          <div><div style="font-size:13px;font-weight:600;color:#1C1830;margin-bottom:2px">CEAL Certificate</div><div style="font-size:12px;color:#73718A;line-height:1.5">PDF with your score. Issued by LOVEUAD LTD. LinkedIn ready.</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modules -->
+  <div class="page">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:12px">
+      <div>
+        <h2 style="font-family:Georgia,serif;font-size:18px;font-weight:400;color:#1C1830;margin-bottom:2px">Your Simulation Modules</h2>
+        <p class="muted">Click any unlocked module to start. Complete all 5 levels to finish a module.</p>
+      </div>
+      <div style="display:flex;gap:16px;flex-wrap:wrap">
+        <div style="display:flex;align-items:center;gap:5px"><div style="width:10px;height:10px;border-radius:50%;background:#1B3068"></div><span class="muted">Foundation</span></div>
+        <div style="display:flex;align-items:center;gap:5px"><div style="width:10px;height:10px;border-radius:50%;background:#0D6B4A"></div><span class="muted">Professional</span></div>
+        <div style="display:flex;align-items:center;gap:5px"><div style="width:10px;height:10px;border-radius:50%;background:#5B2D8E"></div><span class="muted">Full</span></div>
+        <div style="display:flex;align-items:center;gap:5px"><div style="width:10px;height:10px;border-radius:50%;background:#DDD8CE"></div><span class="muted">Locked</span></div>
       </div>
     </div>
     <div class="mod-grid" id="mod-grid"></div>
+
+    <!-- How it works -->
+    <div style="margin-top:48px;padding:32px;background:#fff;border:1px solid #DDD8CE;border-radius:12px">
+      <h2 style="font-family:Georgia,serif;font-size:18px;font-weight:400;color:#1C1830;margin-bottom:20px">How each module works</h2>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:16px">
+        <div style="border-left:3px solid #1B3068;padding:0 0 0 14px">
+          <div style="font-size:11px;font-weight:700;color:#1B3068;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:5px">Level 1 — Explore</div>
+          <div style="font-size:13px;color:#4A4862;line-height:1.6">Live AI consultant session. You talk, it scores. Minimum 4 exchanges required.</div>
+        </div>
+        <div style="border-left:3px solid #0D6B4A;padding:0 0 0 14px">
+          <div style="font-size:11px;font-weight:700;color:#0D6B4A;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:5px">Level 2 — Design</div>
+          <div style="font-size:13px;color:#4A4862;line-height:1.6">Drag and drop. Build policies, pipelines, and architectures. AI evaluates every placement.</div>
+        </div>
+        <div style="border-left:3px solid #8B6000;padding:0 0 0 14px">
+          <div style="font-size:11px;font-weight:700;color:#8B6000;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:5px">Level 3 — Comply</div>
+          <div style="font-size:13px;color:#4A4862;line-height:1.6">Compliance checklist. Miss the hidden Ghost Data node and it haunts you in Module 5.</div>
+        </div>
+        <div style="border-left:3px solid #B02020;padding:0 0 0 14px">
+          <div style="font-size:11px;font-weight:700;color:#B02020;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:5px">Level 4 — Defend</div>
+          <div style="font-size:13px;color:#4A4862;line-height:1.6">Boardroom simulation. CFO, CTO, or regulator challenges every claim you make.</div>
+        </div>
+        <div style="border-left:3px solid #5B2D8E;padding:0 0 0 14px">
+          <div style="font-size:11px;font-weight:700;color:#5B2D8E;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:5px">Level 5 — Future Proof</div>
+          <div style="font-size:13px;color:#4A4862;line-height:1.6">Build your roadmap. Confidence rated. AI stress-tests every phase.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Ghost data explainer -->
+    <div style="margin-top:16px;background:#FFFAEE;border:1px solid #E8C860;border-radius:10px;padding:20px 24px;display:flex;gap:16px;align-items:flex-start">
+      <div style="font-size:28px;flex-shrink:0">👻</div>
+      <div>
+        <div style="font-size:14px;font-weight:600;color:#7A5800;margin-bottom:5px">The Ghost Data Mechanic</div>
+        <div style="font-size:13px;color:#9A7000;line-height:1.7">In Module 3 Level 3, a hidden sensitive data node — employee performance records — is quietly introduced into your RAG pipeline. If you do not catch and quarantine it during the compliance audit, it carries forward as a live GDPR Article 9 violation. When you reach Module 5 Level 3, the mock regulator will find it and your audit will fail. This is how real enterprise AI failures happen — not with a bang, but with a checkbox no one ticked.</div>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -296,11 +521,20 @@ function buildLoginModuleList() {
   const el = document.getElementById("login-module-list")
   el.innerHTML = MODULES.map(m => {
     const tc = TIERS[m.tier]
-    return `<div style="display:flex;gap:10px;margin-bottom:8px;align-items:flex-start">
-      <div style="width:26px;height:26px;border-radius:6px;background:${tc.bg};display:flex;align-items:center;justify-content:center;flex-shrink:0">
-        <span style="font-size:10px;font-weight:700;color:${tc.color}">${m.code}</span>
+    const levelLabels = ["Explore","Design","Comply","Defend","Future Proof"]
+    return `<div style="background:#fff;border:1px solid #DDD8CE;border-radius:10px;padding:20px;border-top:3px solid ${tc.color}">
+      <div style="display:flex;gap:10px;align-items:flex-start;margin-bottom:12px">
+        <div style="width:30px;height:30px;border-radius:7px;background:${tc.bg};display:flex;align-items:center;justify-content:center;flex-shrink:0">
+          <span style="font-size:11px;font-weight:700;color:${tc.color}">${m.code}</span>
+        </div>
+        <div>
+          <div style="font-size:14px;font-weight:600;color:#1C1830;margin-bottom:2px">${m.title}</div>
+          <div style="font-size:12px;color:#73718A">${m.tagline}</div>
+        </div>
       </div>
-      <div><div style="font-size:13px;font-weight:600">${m.title}</div><div class="muted">${m.tagline}</div></div>
+      <div style="display:flex;gap:5px;flex-wrap:wrap">
+        ${levelLabels.map((l,i)=>`<span style="font-size:10px;font-weight:600;color:${tc.color};background:${tc.bg};padding:2px 7px;border-radius:10px">${i+1}. ${l}</span>`).join('')}
+      </div>
     </div>`
   }).join("")
 }
@@ -386,12 +620,17 @@ function showDash() {
 
   document.getElementById("dash-username").textContent = STATE.user.name
   document.getElementById("dash-welcome").textContent = "Welcome back, " + STATE.user.name.split(" ")[0]
-  document.getElementById("dash-progress-text").textContent = done + " of " + total + " levels complete · " + tc.label
+  document.getElementById("dash-progress-text").textContent = done + " of " + total + " levels complete"
   document.getElementById("dash-pct").textContent = Math.round((done/total)*100||0) + "%"
-  document.getElementById("dash-pct").style.color = tc.color
   document.getElementById("dash-pbar").style.width = (done/total*100) + "%"
-  document.getElementById("dash-pbar").style.background = tc.color
   document.getElementById("dash-tier-badge").innerHTML = badge(tc.label, tc.color, tc.bg)
+  document.getElementById("dash-done-num").textContent = done
+  document.getElementById("dash-total-num").textContent = total
+
+  // Average score across all levels
+  const allScores = Object.values(STATE.scores).flatMap(m=>Object.values(m)).filter(Boolean)
+  const avg = allScores.length ? Math.round(allScores.reduce((a,b)=>a+b,0)/allScores.length) : null
+  document.getElementById("dash-avg-num").textContent = avg ? avg+"/100" : "—"
 
   // Show certificate button if at least one module fully completed
   const anyModDone = MODULES.some(m => allowed.includes(m.id) && Object.values(STATE.progress[m.id]||{}).filter(v=>v==="completed").length === 5)
