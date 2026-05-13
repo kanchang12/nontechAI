@@ -20,7 +20,14 @@ sb     = create_client(SUPABASE_URL, SUPABASE_KEY) if SUPABASE_URL and SUPABASE_
 gemini = genai.Client(api_key=GEMINI_KEY) if GEMINI_KEY else None
 
 app = FastAPI(title="AI with AI — CEAL Platform")
-app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], allow_headers=["*"])
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=False,
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allow_headers=["*"],
+    expose_headers=["*"],
+)
 
 # Serve frontend HTML from static/
 app.mount("/static", StaticFiles(directory="static"), name="static")
@@ -28,6 +35,10 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 @app.get("/")
 def root():
     return FileResponse("static/platform.html")
+
+@app.options("/{rest_of_path:path}")
+async def preflight(rest_of_path: str):
+    return {}
 
 # ── MODELS ────────────────────────────────────────────────────────────────────
 class RegisterReq(BaseModel):
