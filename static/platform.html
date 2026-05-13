@@ -191,6 +191,7 @@
     <div class="flex-center gap-12">
       <span id="dash-tier-badge"></span>
       <span class="muted" id="dash-username"></span>
+      <button class="btn btn-navy" id="cert-btn" style="font-size:12px;padding:6px 14px;display:none" onclick="downloadCertificate()">⬇ Certificate PDF</button>
       <button class="btn-ghost" onclick="logout()">Sign out</button>
     </div>
   </div>
@@ -391,6 +392,10 @@ function showDash() {
   document.getElementById("dash-pbar").style.width = (done/total*100) + "%"
   document.getElementById("dash-pbar").style.background = tc.color
   document.getElementById("dash-tier-badge").innerHTML = badge(tc.label, tc.color, tc.bg)
+
+  // Show certificate button if at least one module fully completed
+  const anyModDone = MODULES.some(m => allowed.includes(m.id) && Object.values(STATE.progress[m.id]||{}).filter(v=>v==="completed").length === 5)
+  document.getElementById("cert-btn").style.display = anyModDone ? "block" : "none"
 
   const grid = document.getElementById("mod-grid")
   grid.innerHTML = MODULES.map(mod => {
@@ -965,6 +970,26 @@ function ring(v, max, sz, str, color) {
     <text x="${sz/2}" y="${sz/2+1}" text-anchor="middle" dominant-baseline="middle" style="font-size:10px;font-weight:700;fill:${color}">${v}/${max}</text>
   </svg>`
 }
+
+async function downloadCertificate() {
+  const btn = document.getElementById("cert-btn")
+  btn.textContent = "Generating…"; btn.disabled = true
+  try {
+    const r = await fetch(API + "/api/certificate/pdf", {headers:{"x-token":STATE.token||""}})
+    if(!r.ok) throw new Error("Failed")
+    const blob = await r.blob()
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement("a")
+    a.href = url
+    a.download = `CEAL_Certificate_${STATE.user.name.replace(/ /g,"_")}.pdf`
+    a.click()
+    URL.revokeObjectURL(url)
+  } catch(e) {
+    alert("Certificate generation failed. Please try again.")
+  }
+  btn.textContent = "⬇ Certificate PDF"; btn.disabled = false
+}
+
 </script>
 </body>
 </html>
